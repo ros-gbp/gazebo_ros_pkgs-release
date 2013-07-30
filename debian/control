@@ -1,0 +1,12 @@
+Source: ros-hydro-gazebo
+Section: misc
+Priority: extra
+Maintainer: John Hsu <hsu@osrfoundation.org>
+Build-Depends: debhelper (>= 7.0.50~), ros-hydro-catkin
+Homepage: 
+Standards-Version: 3.9.2
+
+Package: ros-hydro-gazebo
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, 
+Description: Deprecated package that used to pull a version of Gazebo to build for ROS. Now Gazebo is installed through a stand alone debian.
