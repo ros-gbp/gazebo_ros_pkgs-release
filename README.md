@@ -1,3 +1,28 @@
+## gazebo_ros_pkgs (kinetic) - 2.5.4-0
+
+The packages in the `gazebo_ros_pkgs` repository were released into the `kinetic` distro by running `/usr/bin/bloom-release gazebo_ros_pkgs --track kinetic --rosdistro kinetic` on `Wed, 27 Apr 2016 23:53:09 -0000`
+
+These packages were released:
+- `gazebo_msgs`
+- `gazebo_plugins`
+- `gazebo_ros`
+- `gazebo_ros_pkgs`
+
+Version of package(s) in repository `gazebo_ros_pkgs`:
+- upstream repository: https://github.com/ros-simulation/gazebo_ros_pkgs.git
+- release repository: unknown
+- rosdistro version: `null`
+- old version: `2.5.3-0`
+- new version: `2.5.4-0`
+
+Versions of tools used:
+- bloom version: `0.5.20`
+- catkin_pkg version: `0.2.10`
+- rosdep version: `0.11.4`
+- rosdistro version: `0.4.4`
+- vcstools version: `0.1.38`
+
+
 ## gazebo_ros_pkgs (jade) - 2.5.3-0
 
 The packages in the `gazebo_ros_pkgs` repository were released into the `jade` distro by running `/usr/bin/bloom-release --track jade --ros-distro jade gazebo_ros_pkgs` on `Mon, 11 Apr 2016 12:31:51 -0000`
