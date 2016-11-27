@@ -2,6 +2,9 @@
 Changelog for package gazebo_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2.4.12 (2016-11-27)
+-------------------
+
 2.4.11 (2016-07-14)
 -------------------
 * Use NOT VERSION_LESS to simplify cmake logic
