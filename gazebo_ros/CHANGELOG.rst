@@ -2,70 +2,27 @@
 Changelog for package gazebo_ros
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-2.6.0 (2016-08-04)
-------------------
-* Honor GAZEBO_MASTER_URI for gzserver and gzclient.
-* Contributors: Martin Pecka
+2.4.12 (2016-11-27)
+-------------------
+* Fixed getLinkState service's angular velocity return
+* Contributors: Jared
 
-2.5.4 (2016-04-27)
-------------------
-* Update maintainer for Kinetic release
-* support to change clock frequncy from ros param
-* Allow respawning gazebo node.
-* Add option to change package:// to model:// when loading urdf file 
-* Fix string replacement to look for mesh filename surrounded by single or double quotes.
-* Contributors: Isaac IY Saito, John Hsu, Jose Luis Rivero, Kei Okada, Steven Peters, Yuki Furuta
-
-2.5.3 (2016-04-11)
-------------------
-* Include binary in runtime
-* Remove ROS remapping arguments from gazebo_ros launch scripts.
-* Contributors: Jose Luis Rivero, Martin Pecka
-
-2.5.2 (2016-02-25)
-------------------
-* merging from indigo-devel
-* Merge pull request `#302 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/302>`_ from maxbader/jade-devel-GetModelState
-  Header for GetModelState service request for jade-devel
-* Fix invalid signal name on OS X
-  scripts/gazebo: line 30: kill: SIGINT: invalid signal specification
-* Fix invalid signal name on OS X
-  scripts/gazebo: line 30: kill: SIGINT: invalid signal specification
-* Restart package resolving from last position, do not start all over.
-* 2.4.9
-* Generate changelog
-* Import changes from jade-branch
-* Add range world and launch file
-* fix crash
-* Set GAZEBO_CXX_FLAGS to fix c++11 compilation errors
-* GetModelState modification for jade
-* Contributors: Bence Magyar, Boris Gromov, Guillaume Walck, Ian Chen, John Hsu, Jose Luis Rivero, Markus Bader, Steven Peters, hsu
-
-2.5.1 (2015-08-16)
-------------------
-* Port of Pal Robotics range sensor plugin to Jade
-* Added a comment about the need of libgazebo5-dev in runtime
-* Added missing files
-* Added elevator plugin
-* Use c++11
-* run_depend on libgazebo5-dev (`#323 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/323>`_)
-  Declare the dependency.
-  It can be fixed later if we don't want it.
-* Contributors: Jose Luis Rivero, Nate Koenig, Steven Peters
-
-* Port of Pal Robotics range sensor plugin to Jade
-* Added a comment about the need of libgazebo5-dev in runtime
-* Added missing files
-* Added elevator plugin
-* Use c++11
-* run_depend on libgazebo5-dev
-* Contributors: Jose Luis Rivero, Nate Koenig, Steven Peters
-
-2.5.0 (2015-04-30)
-------------------
-* run_depend on libgazebo5-dev instead of gazebo5
-* Changed the rosdep key for gazebo to gazebo5, for Jade Gazebo5 will be used.
-* Contributors: Steven Peters, William Woodall
+2.4.11 (2016-07-14)
+-------------------
+* GAZEBO_MASTER_URI is loaded from setup.sh if empty in environment.
+* Honor GAZEBO_MASTER_URI for gzserver.
+* Honor GAZEBO_MASTER_URI for gzclient.
+* Fix string replacement to look for mesh filename surrounded by single or double quotes. Also do not replace unless there are two slashes after package
+* Merge pull request `#423 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/423>`_ from furushchev/fix-include
+  [gazebo_ros] fix include path
+* Include {PROJECT_NAME}_EXPORTED_TARGETS into dependencies for dynamic reconfiguration
+* [gazebo_ros] put header file to standard catkin include path
+* Add rostest to accompany range plugin world
+* Follow ROS documentation and depend on catkin_EXPORTED_TARGETS
+* Remove all references to gazebo_msgs_gencpp (ghost)
+* missing link_directories()
+* add option to change package:// to model:// when loading urdf file
+* Contributors: Bence Magyar, John Hsu, Jose Luis Rivero, Kei Okada, Martin Pecka, Steven Peters, Yuki Furuta
 
 2.4.10 (2016-02-25)
 -------------------

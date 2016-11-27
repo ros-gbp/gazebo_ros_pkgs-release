@@ -2,30 +2,13 @@
 Changelog for package gazebo_msgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-2.6.0 (2016-08-04)
-------------------
+2.4.12 (2016-11-27)
+-------------------
 
-2.5.4 (2016-04-27)
-------------------
-* fix wrong dependencies
-* Contributors: Jose Luis Rivero, Steven Peters, Yuki Furuta
-
-2.5.3 (2016-04-11)
-------------------
-
-2.5.2 (2016-02-25)
-------------------
-* merging from indigo-devel
-* 2.4.9
-* Generate changelog
-* GetModelState modification for jade
-* Contributors: John Hsu, Jose Luis Rivero, Markus Bader
-
-2.5.1 (2015-08-16)
-------------------
-
-2.5.0 (2015-04-30)
-------------------
+2.4.11 (2016-07-14)
+-------------------
+* [gazebo_msgs] fix wrong dependencies
+* Contributors: Yuki Furuta
 
 2.4.10 (2016-02-25)
 -------------------
