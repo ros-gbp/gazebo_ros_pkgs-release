@@ -2,38 +2,31 @@
 Changelog for package gazebo_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-2.6.1 (2016-12-06)
+2.5.8 (2016-12-06)
 ------------------
 * Fix camera distortion coefficients order. Now {k1, k2, p1, p2, k3}
-* Contributors: Enrique Fernandez
-
-2.6.0 (2016-08-04)
-------------------
-* Use NOT VERSION_LESS to simplify cmake logic
 * Added an interface to gazebo's harness plugin
-* removed extra includes
-* Fix gazebo7 deprecation warnings
-* bugfix: duplicated tf prefix resolution
-* Contributors: Steven Peters, Yuki Furuta, nate koenig
+* Contributors: Enrique Fernandez, Steven Peters, Nate Koenig
 
-2.5.4 (2016-04-27)
+2.5.7 (2016-06-10)
 ------------------
 
-* Also accept "/world" as frameName parameter in gazebo_ros_p3d plugin 
-* IMU supports frameName 
-* Added missing link_directories() 
-* Publish organized point cloud from openni_kinect plugin 
-* Fix row_step of openni_kinect plugin 
-* Add rostest to accompany range plugin world 
-* Fix gazebo_ros_joint_pose_trajectory.cpp bug that caused simulated trajectories to run fast
-* hog: making only the hand of god link zero-g. this lets you use the hand of god on a single link in a gravity-affected model
-* gazebo_ros_joint_pose_trajectory.cpp BUG that caused simulated trajectories to run fast
-* diffdrive: add parameter legacyMode for not breaking old packages 
-  Left and right wheel are inverted - if you put in the real right wheel
-  in the previous state of the plugin the robot drives into the opposite direction.
-* Add vacuum gripper plugin
-* tricycle drive motorController debugged
-* Contributors: Benjamin Blumer, Christian Holl, Horatiu George Todoran, John Hsu, Jonathan Bohren, Jose Luis Rivero, Kentaro Wada, Steven Peters, Yuki Furuta
+2.5.6 (2016-04-28)
+------------------
+* fix gazebo7 deprecation warnings on kinetic
+* Contributors: Steven Peters
+
+2.5.5 (2016-04-27)
+------------------
+* merge indigo, jade to kinetic-devel
+* Accept /world for the frameName parameter in gazebo_ros_p3d
+* Upgrade to gazebo 7 and remove deprecated driver_base dependency
+  * Upgrade to gazebo 7 and remove deprecated driver_base dependency
+  * disable gazebo_ros_control until dependencies are met
+  * Remove stray backslash
+* Update maintainer for Kinetic release
+* use HasElement in if condition
+* Contributors: Hugo Boyer, Jackie Kay, Jose Luis Rivero, Steven Peters, William Woodall, Yuki Furuta
 
 2.5.3 (2016-04-11)
 ------------------

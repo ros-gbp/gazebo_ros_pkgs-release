@@ -105,11 +105,7 @@ void GazeboRosCameraUtils::Load(sensors::SensorPtr _parent,
   const std::string &_camera_name_suffix)
 {
   // Get the world name.
-# if GAZEBO_MAJOR_VERSION >= 7
   std::string world_name = _parent->WorldName();
-# else
-  std::string world_name = _parent->GetWorldName();
-# endif
 
   // Get the world_
   this->world_ = physics::get_world(world_name);
@@ -123,7 +119,7 @@ void GazeboRosCameraUtils::Load(sensors::SensorPtr _parent,
 
   std::stringstream ss;
   this->robot_namespace_ =  GetRobotNamespace(_parent, _sdf, "Camera");
-
+  
   this->image_topic_name_ = "image_raw";
   if (this->sdf->HasElement("imageTopicName"))
     this->image_topic_name_ = this->sdf->Get<std::string>("imageTopicName");
@@ -281,8 +277,16 @@ void GazeboRosCameraUtils::LoadThread()
   this->camera_info_manager_.reset(new camera_info_manager::CameraInfoManager(
           *this->rosnode_, this->camera_name_));
 
-  this->itnode_ = new image_transport::ImageTransport(*this->rosnode_);
+  // resolve tf prefix
+  std::string key;
+  if(this->rosnode_->searchParam("tf_prefix", key)){
+    std::string prefix;
+    this->rosnode_->getParam(key, prefix);
+    this->frame_name_ = tf::resolve(prefix, this->frame_name_);
+  }
 
+  this->itnode_ = new image_transport::ImageTransport(*this->rosnode_);
+  
   // resolve tf prefix
   this->tf_prefix_ = tf::getPrefixParam(*this->rosnode_);
   if(this->tf_prefix_.empty()) {
@@ -293,8 +297,8 @@ void GazeboRosCameraUtils::LoadThread()
 
   ROS_INFO("Camera Plugin (ns = %s)  <tf_prefix_>, set to \"%s\"",
              this->robot_namespace_.c_str(), this->tf_prefix_.c_str());
-
-
+  
+  
   if (!this->camera_name_.empty())
   {
     dyn_srv_ =
@@ -468,15 +472,10 @@ void GazeboRosCameraUtils::Init()
     this->cy_ = (static_cast<double>(this->height_) + 1.0) /2.0;
 
 
-# if GAZEBO_MAJOR_VERSION >= 7
+  double hfov = this->camera_->HFOV().Radian();
   double computed_focal_length =
     (static_cast<double>(this->width_)) /
-    (2.0 * tan(this->camera_->HFOV().Radian() / 2.0));
-# else
-  double computed_focal_length =
-    (static_cast<double>(this->width_)) /
-    (2.0 * tan(this->camera_->GetHFOV().Radian() / 2.0));
-# endif
+    (2.0 * tan(hfov / 2.0));
 
   if (this->focal_length_ == 0)
   {
@@ -487,7 +486,6 @@ void GazeboRosCameraUtils::Init()
     // check against float precision
     if (!gazebo::math::equal(this->focal_length_, computed_focal_length))
     {
-# if GAZEBO_MAJOR_VERSION >= 7
       ROS_WARN("The <focal_length>[%f] you have provided for camera_ [%s]"
                " is inconsistent with specified image_width [%d] and"
                " HFOV [%f].   Please double check to see that"
@@ -495,20 +493,8 @@ void GazeboRosCameraUtils::Init()
                " the explected focal_lengtth value is [%f],"
                " please update your camera_ model description accordingly.",
                 this->focal_length_, this->parentSensor_->Name().c_str(),
-                this->width_, this->camera_->HFOV().Radian(),
+                this->width_, hfov,
                 computed_focal_length);
-# else
-      ROS_WARN("The <focal_length>[%f] you have provided for camera_ [%s]"
-               " is inconsistent with specified image_width [%d] and"
-               " HFOV [%f].   Please double check to see that"
-               " focal_length = width_ / (2.0 * tan(HFOV/2.0)),"
-               " the explected focal_lengtth value is [%f],"
-               " please update your camera_ model description accordingly.",
-                this->focal_length_, this->parentSensor_->GetName().c_str(),
-                this->width_, this->camera_->GetHFOV().Radian(),
-                computed_focal_length);
-
-# endif
     }
   }
 
@@ -628,11 +614,7 @@ void GazeboRosCameraUtils::PublishCameraInfo()
 
   if (this->camera_info_pub_.getNumSubscribers() > 0)
   {
-# if GAZEBO_MAJOR_VERSION >= 7
     this->sensor_update_time_ = this->parentSensor_->LastUpdateTime();
-# else
-    this->sensor_update_time_ = this->parentSensor_->GetLastUpdateTime();
-# endif
     common::Time cur_time = this->world_->GetSimTime();
     if (cur_time - this->last_info_update_time_ >= this->update_period_)
     {

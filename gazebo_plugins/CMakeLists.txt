@@ -16,7 +16,6 @@ find_package(catkin REQUIRED COMPONENTS
   tf 
   tf2_ros 
   dynamic_reconfigure 
-  driver_base 
   rosgraph_msgs 
   trajectory_msgs 
   image_transport 
@@ -132,7 +131,6 @@ catkin_package(
   tf 
   tf2_ros
   dynamic_reconfigure 
-  driver_base 
   rosgraph_msgs 
   trajectory_msgs 
   image_transport 

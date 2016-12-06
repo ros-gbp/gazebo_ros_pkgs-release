@@ -2,17 +2,13 @@
 Changelog for package gazebo_ros_control
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-2.6.1 (2016-12-06)
+2.5.8 (2016-12-06)
 ------------------
 
-2.6.0 (2016-08-04)
+2.5.7 (2016-06-10)
 ------------------
-
-2.5.4 (2016-04-27)
-------------------
-* merge indigo to jade prior to kinetic release
-* Update also the gazebo_ros_control package
-* Contributors: Jose Luis Rivero, Steven Peters
+* delete CATKIN_IGNORE in gazebo_ros_control (`#456 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/456>`_)
+* Contributors: Jackie Kay, Jose Luis Rivero
 
 2.5.3 (2016-04-11)
 ------------------

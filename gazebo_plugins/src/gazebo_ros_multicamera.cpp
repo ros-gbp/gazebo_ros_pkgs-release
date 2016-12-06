@@ -77,20 +77,12 @@ void GazeboRosMultiCamera::Load(sensors::SensorPtr _parent,
     util->image_connect_count_ = this->image_connect_count_;
     util->image_connect_count_lock_ = this->image_connect_count_lock_;
     util->was_active_ = this->was_active_;
-# if GAZEBO_MAJOR_VERSION >= 7
     if (this->camera[i]->Name().find("left") != std::string::npos)
-# else
-    if (this->camera[i]->GetName().find("left") != std::string::npos)
-# endif
     {
       // FIXME: hardcoded, left hack_baseline_ 0
       util->Load(_parent, _sdf, "/left", 0.0);
     }
-# if GAZEBO_MAJOR_VERSION >= 7
     else if (this->camera[i]->Name().find("right") != std::string::npos)
-# else
-    else if (this->camera[i]->GetName().find("right") != std::string::npos)
-# endif
     {
       double hackBaseline = 0.0;
       if (_sdf->HasElement("hackBaseline"))
@@ -108,11 +100,7 @@ void GazeboRosMultiCamera::OnNewFrameLeft(const unsigned char *_image,
     const std::string &_format)
 {
   GazeboRosCameraUtils* util = this->utils[0];
-# if GAZEBO_MAJOR_VERSION >= 7
   util->sensor_update_time_ = util->parentSensor_->LastUpdateTime();
-# else
-  util->sensor_update_time_ = util->parentSensor_->GetLastUpdateTime();
-# endif
 
   if (util->parentSensor_->IsActive())
   {
@@ -133,11 +121,7 @@ void GazeboRosMultiCamera::OnNewFrameRight(const unsigned char *_image,
     const std::string &_format)
 {
   GazeboRosCameraUtils* util = this->utils[1];
-# if GAZEBO_MAJOR_VERSION >= 7
   util->sensor_update_time_ = util->parentSensor_->LastUpdateTime();
-# else
-  util->sensor_update_time_ = util->parentSensor_->GetLastUpdateTime();
-# endif
 
   if (util->parentSensor_->IsActive())
   {
