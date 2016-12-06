@@ -5,7 +5,7 @@ compiler:
   - gcc
 env:
   global:
-    - CI_ROS_DISTRO=indigo
+    - CI_ROS_DISTRO=jade
 
 before_install:
   - export CI_SOURCE_PATH=$(pwd)
