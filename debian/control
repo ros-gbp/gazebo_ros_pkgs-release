@@ -1,0 +1,12 @@
+Source: ros-jade-gazebo-ros-control
+Section: misc
+Priority: extra
+Maintainer: Jose Luis Rivero <jrivero@osrfoundation.org>
+Build-Depends: debhelper (>= 9.0.0), libgazebo5-dev, ros-jade-angles, ros-jade-catkin, ros-jade-control-toolbox, ros-jade-controller-manager, ros-jade-hardware-interface, ros-jade-joint-limits-interface, ros-jade-pluginlib, ros-jade-roscpp, ros-jade-std-msgs, ros-jade-transmission-interface, ros-jade-urdf
+Homepage: http://ros.org/wiki/gazebo_ros_control
+Standards-Version: 3.9.2
+
+Package: ros-jade-gazebo-ros-control
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, libgazebo5-dev, ros-jade-angles, ros-jade-control-toolbox, ros-jade-controller-manager, ros-jade-gazebo-ros, ros-jade-hardware-interface, ros-jade-joint-limits-interface, ros-jade-pluginlib, ros-jade-roscpp, ros-jade-std-msgs, ros-jade-transmission-interface, ros-jade-urdf
+Description: gazebo_ros_control
