@@ -2,6 +2,9 @@
 Changelog for package gazebo_ros
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2.6.2 (2017-02-20)
+------------------
+
 2.6.1 (2016-12-06)
 ------------------
 * Workaround to support gazebo and ROS arguments in the command line
