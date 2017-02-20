@@ -79,7 +79,12 @@ void GazeboRosBlockLaser::Load(sensors::SensorPtr _parent, sdf::ElementPtr _sdf)
   this->parent_sensor_ = _parent;
 
   // Get the world name.
+# if GAZEBO_MAJOR_VERSION >= 7
   std::string worldName = _parent->WorldName();
+# else
+  std::string worldName = _parent->GetWorldName();
+# endif
+
   this->world_ = physics::get_world(worldName);
 
   last_update_time_ = this->world_->GetSimTime();
@@ -99,7 +104,7 @@ void GazeboRosBlockLaser::Load(sensors::SensorPtr _parent, sdf::ElementPtr _sdf)
 
   if (!_sdf->HasElement("frameName"))
   {
-    ROS_INFO_NAMED("block_laser", "Block laser plugin missing <frameName>, defaults to /world");
+    ROS_INFO("Block laser plugin missing <frameName>, defaults to /world");
     this->frame_name_ = "/world";
   }
   else
@@ -107,7 +112,7 @@ void GazeboRosBlockLaser::Load(sensors::SensorPtr _parent, sdf::ElementPtr _sdf)
 
   if (!_sdf->HasElement("topicName"))
   {
-    ROS_INFO_NAMED("block_laser", "Block laser plugin missing <topicName>, defaults to /world");
+    ROS_INFO("Block laser plugin missing <topicName>, defaults to /world");
     this->topic_name_ = "/world";
   }
   else
@@ -115,7 +120,7 @@ void GazeboRosBlockLaser::Load(sensors::SensorPtr _parent, sdf::ElementPtr _sdf)
 
   if (!_sdf->HasElement("gaussianNoise"))
   {
-    ROS_INFO_NAMED("block_laser", "Block laser plugin missing <gaussianNoise>, defaults to 0.0");
+    ROS_INFO("Block laser plugin missing <gaussianNoise>, defaults to 0.0");
     this->gaussian_noise_ = 0;
   }
   else
@@ -123,17 +128,17 @@ void GazeboRosBlockLaser::Load(sensors::SensorPtr _parent, sdf::ElementPtr _sdf)
 
   if (!_sdf->HasElement("hokuyoMinIntensity"))
   {
-    ROS_INFO_NAMED("block_laser", "Block laser plugin missing <hokuyoMinIntensity>, defaults to 101");
+    ROS_INFO("Block laser plugin missing <hokuyoMinIntensity>, defaults to 101");
     this->hokuyo_min_intensity_ = 101;
   }
   else
     this->hokuyo_min_intensity_ = _sdf->GetElement("hokuyoMinIntensity")->Get<double>();
 
-  ROS_DEBUG_NAMED("block_laser", "gazebo_ros_laser plugin should set minimum intensity to %f due to cutoff in hokuyo filters." , this->hokuyo_min_intensity_);
+  ROS_INFO("INFO: gazebo_ros_laser plugin should set minimum intensity to %f due to cutoff in hokuyo filters." , this->hokuyo_min_intensity_);
 
   if (!_sdf->HasElement("updateRate"))
   {
-    ROS_INFO_NAMED("block_laser", "Block laser plugin missing <updateRate>, defaults to 0");
+    ROS_INFO("Block laser plugin missing <updateRate>, defaults to 0");
     this->update_rate_ = 0;
   }
   else
@@ -146,7 +151,7 @@ void GazeboRosBlockLaser::Load(sensors::SensorPtr _parent, sdf::ElementPtr _sdf)
   // Make sure the ROS node for Gazebo has already been initialized
   if (!ros::isInitialized())
   {
-    ROS_FATAL_STREAM_NAMED("block_laser", "A ROS node for Gazebo has not been initialized, unable to load plugin. "
+    ROS_FATAL_STREAM("A ROS node for Gazebo has not been initialized, unable to load plugin. "
       << "Load the Gazebo system plugin 'libgazebo_ros_api_plugin.so' in the gazebo_ros package)");
     return;
   }
@@ -206,7 +211,11 @@ void GazeboRosBlockLaser::OnNewLaserScans()
 {
   if (this->topic_name_ != "")
   {
+# if GAZEBO_MAJOR_VERSION >= 7
     common::Time sensor_update_time = this->parent_sensor_->LastUpdateTime();
+# else
+    common::Time sensor_update_time = this->parent_sensor_->GetLastUpdateTime();
+# endif
     if (last_update_time_ < sensor_update_time)
     {
       this->PutLaserData(sensor_update_time);
@@ -215,7 +224,7 @@ void GazeboRosBlockLaser::OnNewLaserScans()
   }
   else
   {
-    ROS_INFO_NAMED("block_laser", "gazebo_ros_block_laser topic name not set");
+    ROS_INFO("gazebo_ros_block_laser topic name not set");
   }
 }
 
@@ -240,13 +249,26 @@ void GazeboRosBlockLaser::PutLaserData(common::Time &_updateTime)
   math::Angle minAngle = this->parent_ray_sensor_->GetAngleMin();
 #endif
 
+# if GAZEBO_MAJOR_VERSION >= 7
   double maxRange = this->parent_ray_sensor_->RangeMax();
   double minRange = this->parent_ray_sensor_->RangeMin();
   int rayCount = this->parent_ray_sensor_->RayCount();
   int rangeCount = this->parent_ray_sensor_->RangeCount();
+# else
+  double maxRange = this->parent_ray_sensor_->GetRangeMax();
+  double minRange = this->parent_ray_sensor_->GetRangeMin();
+  int rayCount = this->parent_ray_sensor_->GetRayCount();
+  int rangeCount = this->parent_ray_sensor_->GetRangeCount();
+# endif
 
+#if GAZEBO_MAJOR_VERSION >= 7
   int verticalRayCount = this->parent_ray_sensor_->VerticalRayCount();
   int verticalRangeCount = this->parent_ray_sensor_->VerticalRangeCount();
+# else
+  int verticalRayCount = this->parent_ray_sensor_->GetVerticalRayCount();
+  int verticalRangeCount = this->parent_ray_sensor_->GetVerticalRangeCount();
+# endif
+
 #if GAZEBO_MAJOR_VERSION >= 6
   auto verticalMaxAngle = this->parent_ray_sensor_->VerticalAngleMax();
   auto verticalMinAngle = this->parent_ray_sensor_->VerticalAngleMin();
@@ -304,10 +326,17 @@ void GazeboRosBlockLaser::PutLaserData(common::Time &_updateTime)
       j3 = hja + vjb * rayCount;
       j4 = hjb + vjb * rayCount;
       // range readings of 4 corners
+# if GAZEBO_MAJOR_VERSION >= 7
       r1 = std::min(this->parent_ray_sensor_->LaserShape()->GetRange(j1) , maxRange-minRange);
       r2 = std::min(this->parent_ray_sensor_->LaserShape()->GetRange(j2) , maxRange-minRange);
       r3 = std::min(this->parent_ray_sensor_->LaserShape()->GetRange(j3) , maxRange-minRange);
       r4 = std::min(this->parent_ray_sensor_->LaserShape()->GetRange(j4) , maxRange-minRange);
+# else
+      r1 = std::min(this->parent_ray_sensor_->GetLaserShape()->GetRange(j1) , maxRange-minRange);
+      r2 = std::min(this->parent_ray_sensor_->GetLaserShape()->GetRange(j2) , maxRange-minRange);
+      r3 = std::min(this->parent_ray_sensor_->GetLaserShape()->GetRange(j3) , maxRange-minRange);
+      r4 = std::min(this->parent_ray_sensor_->GetLaserShape()->GetRange(j4) , maxRange-minRange);
+# endif
 
       // Range is linear interpolation if values are close,
       // and min if they are very different
@@ -315,10 +344,18 @@ void GazeboRosBlockLaser::PutLaserData(common::Time &_updateTime)
          +   vb *((1 - hb) * r3 + hb * r4);
 
       // Intensity is averaged
+#if GAZEBO_MAJOR_VERSION >= 7
       intensity = 0.25*(this->parent_ray_sensor_->LaserShape()->GetRetro(j1) +
                         this->parent_ray_sensor_->LaserShape()->GetRetro(j2) +
                         this->parent_ray_sensor_->LaserShape()->GetRetro(j3) +
                         this->parent_ray_sensor_->LaserShape()->GetRetro(j4));
+# else
+      intensity = 0.25*(this->parent_ray_sensor_->GetLaserShape()->GetRetro(j1) +
+                        this->parent_ray_sensor_->GetLaserShape()->GetRetro(j2) +
+                        this->parent_ray_sensor_->GetLaserShape()->GetRetro(j3) +
+                        this->parent_ray_sensor_->GetLaserShape()->GetRetro(j4));
+
+# endif
 
       // std::cout << " block debug "
       //           << "  ij("<<i<<","<<j<<")"
@@ -412,3 +449,4 @@ void GazeboRosBlockLaser::OnStats( const boost::shared_ptr<msgs::WorldStatistics
 
 
 }
+

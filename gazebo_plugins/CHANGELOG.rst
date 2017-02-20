@@ -2,47 +2,47 @@
 Changelog for package gazebo_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-2.5.9 (2017-02-20)
+2.6.2 (2017-02-20)
 ------------------
-* Fix gazebo catkin warning, cleanup CMakeLists (`#537 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/537>`_)
-* Fix timestamp issues for rendering sensors (kinetic-devel)
-* Namespace console output (`#543 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/543>`_)
-* Adding depth camera world to use in test to make depth camera have right timestamp `#408 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/408>`_- appears to be working (though only looking at horizon) but getting these sdf errors:
-* `#408 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/408>`_ Make the multi camera timestamps current rather than outdated, also reuse the same update code
-* Fix merge with kinetic branch
-* `#408 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/408>`_ Making a test for multicamra that shows the timestamps are currently outdated, will fix them similar to how the regular camera was fixed.
-* Fix for issue `#408 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/408>`_. The last measurement time is the time that gazebo generated the sensor data, so ought to be used. updateRate doesn't seem that useful.
-  The other cameras need similar fixes to have the proper timestamps.
-* Bugfix: duplicated tf prefix resolution
+* Fix timestamp issues for rendering sensors (`#538 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/538>`_)
+  It affects to gazebo_ros_comera_utils, gazebo_ros_openni_kinnect and gazebo_ros_prosilica.
+* Correct the timestamp used by the camera (`#410 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/410>`_)
+  Fix for issue `#408 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/408>`_. The last measurement time is the time that gazebo generated the sensor data, so ought to be used.  updateRate doesn't seem that useful.
 * fill in child_frame_id of odom topic
-* Fix gazebo and sdformat catkin warnings
-* Contributors: Dave Coleman, Jose Luis Rivero, Kei Okada, Lucas Walter, Yuki Furuta
+* Contributors: Kei Okada, Lucas Walter, Ian Chen
 
-2.5.8 (2016-12-06)
+2.6.1 (2016-12-06)
 ------------------
 * Fix camera distortion coefficients order. Now {k1, k2, p1, p2, k3}
+* Contributors: Enrique Fernandez
+
+2.6.0 (2016-08-04)
+------------------
+* Use NOT VERSION_LESS to simplify cmake logic
 * Added an interface to gazebo's harness plugin
-* Contributors: Enrique Fernandez, Steven Peters, Nate Koenig
+* removed extra includes
+* Fix gazebo7 deprecation warnings
+* bugfix: duplicated tf prefix resolution
+* Contributors: Steven Peters, Yuki Furuta, nate koenig
 
-2.5.7 (2016-06-10)
+2.5.4 (2016-04-27)
 ------------------
 
-2.5.6 (2016-04-28)
-------------------
-* fix gazebo7 deprecation warnings on kinetic
-* Contributors: Steven Peters
-
-2.5.5 (2016-04-27)
-------------------
-* merge indigo, jade to kinetic-devel
-* Accept /world for the frameName parameter in gazebo_ros_p3d
-* Upgrade to gazebo 7 and remove deprecated driver_base dependency
-  * Upgrade to gazebo 7 and remove deprecated driver_base dependency
-  * disable gazebo_ros_control until dependencies are met
-  * Remove stray backslash
-* Update maintainer for Kinetic release
-* use HasElement in if condition
-* Contributors: Hugo Boyer, Jackie Kay, Jose Luis Rivero, Steven Peters, William Woodall, Yuki Furuta
+* Also accept "/world" as frameName parameter in gazebo_ros_p3d plugin 
+* IMU supports frameName 
+* Added missing link_directories() 
+* Publish organized point cloud from openni_kinect plugin 
+* Fix row_step of openni_kinect plugin 
+* Add rostest to accompany range plugin world 
+* Fix gazebo_ros_joint_pose_trajectory.cpp bug that caused simulated trajectories to run fast
+* hog: making only the hand of god link zero-g. this lets you use the hand of god on a single link in a gravity-affected model
+* gazebo_ros_joint_pose_trajectory.cpp BUG that caused simulated trajectories to run fast
+* diffdrive: add parameter legacyMode for not breaking old packages 
+  Left and right wheel are inverted - if you put in the real right wheel
+  in the previous state of the plugin the robot drives into the opposite direction.
+* Add vacuum gripper plugin
+* tricycle drive motorController debugged
+* Contributors: Benjamin Blumer, Christian Holl, Horatiu George Todoran, John Hsu, Jonathan Bohren, Jose Luis Rivero, Kentaro Wada, Steven Peters, Yuki Furuta
 
 2.5.3 (2016-04-11)
 ------------------

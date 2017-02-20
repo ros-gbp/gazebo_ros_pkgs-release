@@ -108,13 +108,13 @@ public:
 
   /// \brief Destructor
   ~GazeboRosApiPlugin();
-
+  
   /// \bried Detect if sig-int shutdown signal is recieved
   void shutdownSignal();
 
   /// \brief Gazebo-inherited load function
-  ///
-  /// Called before Gazebo is loaded. Must not block.
+  /// 
+  /// Called before Gazebo is loaded. Must not block. 
   /// Capitalized per Gazebo cpp style guidelines
   /// \param _argc Number of command line arguments.
   /// \param _argv Array of command line arguments.
@@ -140,6 +140,9 @@ public:
 
   /// \brief Function for inserting a URDF into Gazebo from ROS Service Call
   bool spawnURDFModel(gazebo_msgs::SpawnModel::Request &req,gazebo_msgs::SpawnModel::Response &res);
+
+  /// \brief Function for inserting a URDF into Gazebo from ROS Service Call. Deprecated in ROS Hydro - replace with spawnURDFModel()
+  ROS_DEPRECATED bool spawnGazeboModel(gazebo_msgs::SpawnModel::Request &req,gazebo_msgs::SpawnModel::Response &res);
 
   /// \brief Both SDFs and converted URDFs get sent to this function for further manipulation from a ROS Service call
   bool spawnSDFModel(gazebo_msgs::SpawnModel::Request &req,gazebo_msgs::SpawnModel::Response &res);
@@ -240,11 +243,11 @@ private:
   void stripXmlDeclaration(std::string &model_xml);
 
   /// \brief Update the model name and pose of the SDF file before sending to Gazebo
-  void updateSDFAttributes(TiXmlDocument &gazebo_model_xml, std::string model_name,
+  void updateSDFAttributes(TiXmlDocument &gazebo_model_xml, std::string model_name, 
                            gazebo::math::Vector3 initial_xyz, gazebo::math::Quaternion initial_q);
 
   /// \brief Update the model pose of the URDF file before sending to Gazebo
-  void updateURDFModelPose(TiXmlDocument &gazebo_model_xml,
+  void updateURDFModelPose(TiXmlDocument &gazebo_model_xml, 
                            gazebo::math::Vector3 initial_xyz, gazebo::math::Quaternion initial_q);
 
   /// \brief Update the model name of the URDF file before sending to Gazebo
@@ -254,7 +257,7 @@ private:
   void walkChildAddRobotNamespace(TiXmlNode* robot_xml);
 
   /// \brief
-  bool spawnAndConform(TiXmlDocument &gazebo_model_xml, std::string model_name,
+  bool spawnAndConform(TiXmlDocument &gazebo_model_xml, std::string model_name, 
                        gazebo_msgs::SpawnModel::Response &res);
 
   /// \brief helper function for applyBodyWrench
@@ -291,7 +294,7 @@ private:
   bool plugin_loaded_;
 
   // detect if sigint event occurs
-  bool stop_;
+  bool stop_; 
   gazebo::event::ConnectionPtr sigint_event_;
 
   std::string robot_namespace_;
@@ -314,6 +317,7 @@ private:
   gazebo::event::ConnectionPtr pub_model_states_event_;
   gazebo::event::ConnectionPtr load_gazebo_ros_api_plugin_event_;
 
+  ros::ServiceServer spawn_gazebo_model_service_; // DEPRECATED IN HYDRO
   ros::ServiceServer spawn_sdf_model_service_;
   ros::ServiceServer spawn_urdf_model_service_;
   ros::ServiceServer delete_model_service_;
@@ -386,9 +390,9 @@ private:
 
   std::vector<GazeboRosApiPlugin::WrenchBodyJob*> wrench_body_jobs_;
   std::vector<GazeboRosApiPlugin::ForceJointJob*> force_joint_jobs_;
-
+  
   /// \brief index counters to count the accesses on models via GetModelState
-  std::map<std::string, unsigned int> access_count_get_model_state_;
+  std::map<std::string, unsigned int> access_count_get_model_state_; 
 };
 }
 #endif

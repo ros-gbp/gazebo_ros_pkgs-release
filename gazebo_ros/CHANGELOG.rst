@@ -2,40 +2,32 @@
 Changelog for package gazebo_ros
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-2.5.9 (2017-02-20)
+2.6.2 (2017-02-20)
 ------------------
-* Fix gazebo catkin warning, cleanup CMakeLists (`#537 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/537>`_)
-* Namespace console output (`#543 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/543>`_)
-* Removed all trailing whitespace
-* Contributors: Dave Coleman
 
-2.5.8 (2016-12-06)
+2.6.1 (2016-12-06)
 ------------------
 * Workaround to support gazebo and ROS arguments in the command line
-* Fix ROS remapping by reverting "Remove ROS remapping arguments from gazebo_ros launch scripts.
+* Fix ROS remappings by reverting "Remove ROS remapping arguments from gazebo_ros launch scripts"
+* Added comments regarding 'headless' arg. Added 'recording' arg as switch for -r
 * Fixed getlinkstate service's angular velocity return
-* Honor GAZEBO_MASTER_URI in gzserver and gzclient
-* Contributors: Jared, Jon Binney, Jordan Liviero, Jose Luis Rivero, Martin Pecka
+* Add a roslaunch 'required' argument: enables the 'required' flag on gazebo_gui node
+* Add an argument to enable required flag on gazebo gui, same tag name "required" as in ROS
+* Contributors: Jared, Jon Binney, Jordan Liviero, Jose Luis Rivero, vincentrou
 
-2.5.7 (2016-06-10)
+2.6.0 (2016-08-04)
 ------------------
+* Honor GAZEBO_MASTER_URI for gzserver and gzclient.
+* Contributors: Martin Pecka
 
-2.5.6 (2016-04-28)
+2.5.4 (2016-04-27)
 ------------------
-* Remove deprecated spawn_gazebo_model service
-* Contributors: Steven Peters
-
-2.5.5 (2016-04-27)
-------------------
-* merge indigo, jade to kinetic-devel
-* Upgrade to gazebo 7 and remove deprecated driver_base dependency
-  * Upgrade to gazebo 7 and remove deprecated driver_base dependency
-  * disable gazebo_ros_control until dependencies are met
-  * Remove stray backslash
-* spawn_model: adding -b option to bond to the model and delete it on sigint
 * Update maintainer for Kinetic release
+* support to change clock frequncy from ros param
 * Allow respawning gazebo node.
-* Contributors: Hugo Boyer, Isaac IY Saito, Jackie Kay, Jonathan Bohren, Jose Luis Rivero, Steven Peters
+* Add option to change package:// to model:// when loading urdf file 
+* Fix string replacement to look for mesh filename surrounded by single or double quotes.
+* Contributors: Isaac IY Saito, John Hsu, Jose Luis Rivero, Kei Okada, Steven Peters, Yuki Furuta
 
 2.5.3 (2016-04-11)
 ------------------
