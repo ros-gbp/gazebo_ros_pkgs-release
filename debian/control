@@ -1,0 +1,13 @@
+Source: ros-jade-gazebo-ros
+Section: misc
+Priority: extra
+Maintainer: Jose Luis Rivero <jrivero@osrfoundation.org>
+Build-Depends: debhelper (>= 9.0.0), libgazebo5-dev, libtinyxml-dev, ros-jade-catkin, ros-jade-cmake-modules, ros-jade-dynamic-reconfigure, ros-jade-gazebo-msgs, ros-jade-geometry-msgs, ros-jade-message-generation, ros-jade-roscpp, ros-jade-rosgraph-msgs, ros-jade-roslib, ros-jade-std-msgs, ros-jade-std-srvs, ros-jade-tf
+Homepage: http://gazebosim.org/tutorials?cat=connect_ros
+Standards-Version: 3.9.2
+
+Package: ros-jade-gazebo-ros
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, gazebo5, libgazebo5-dev, libtinyxml-dev, ros-jade-dynamic-reconfigure, ros-jade-gazebo-msgs, ros-jade-geometry-msgs, ros-jade-message-generation, ros-jade-roscpp, ros-jade-rosgraph-msgs, ros-jade-roslib, ros-jade-std-msgs, ros-jade-std-srvs, ros-jade-tf
+Description: Provides ROS plugins that offer message and service publishers for interfacing with Gazebo through ROS.
+ Formally simulator_gazebo/gazebo
