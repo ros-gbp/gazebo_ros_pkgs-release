@@ -95,7 +95,7 @@ void GazeboRosProsilica::Advertise()
   // camera mode for prosilica:
   // prosilica::AcquisitionMode mode_; /// @todo Make this property of Camera
 
-  //ROS_ERROR("before trigger_mode %s %s",this->mode_param_name.c_str(),this->mode_.c_str());
+  //ROS_ERROR_NAMED("prosilica", "before trigger_mode %s %s",this->mode_param_name.c_str(),this->mode_.c_str());
 
   if (!this->rosnode_->searchParam("trigger_mode",this->mode_param_name)) ///\@todo: hardcoded per prosilica_camera wiki api, make this an urdf parameter
       this->mode_param_name = "trigger_mode";
@@ -103,7 +103,7 @@ void GazeboRosProsilica::Advertise()
   if (!this->rosnode_->getParam(this->mode_param_name,this->mode_))
       this->mode_ = "streaming";
 
-  ROS_INFO("trigger_mode %s %s",this->mode_param_name.c_str(),this->mode_.c_str());
+  ROS_INFO_NAMED("prosilica", "trigger_mode %s %s",this->mode_param_name.c_str(),this->mode_.c_str());
 
 
   if (this->mode_ == "polled")
@@ -112,11 +112,11 @@ void GazeboRosProsilica::Advertise()
   }
   else if (this->mode_ == "streaming")
   {
-      ROS_DEBUG("do nothing here,mode: %s",this->mode_.c_str());
+      ROS_DEBUG_NAMED("prosilica", "do nothing here,mode: %s",this->mode_.c_str());
   }
   else
   {
-      ROS_ERROR("trigger_mode is invalid: %s, using streaming mode",this->mode_.c_str());
+      ROS_ERROR_NAMED("prosilica", "trigger_mode is invalid: %s, using streaming mode",this->mode_.c_str());
   }
 }
 
@@ -131,14 +131,10 @@ void GazeboRosProsilica::OnNewImageFrame(const unsigned char *_image,
 
   // should do nothing except turning camera on/off, as we are using service.
   /// @todo: consider adding thumbnailing feature here if subscribed.
-# if GAZEBO_MAJOR_VERSION >= 7
   common::Time sensor_update_time = this->parentSensor_->LastMeasurementTime();
-# else
-  common::Time sensor_update_time = this->parentSensor_->GetLastMeasurementTime();
-# endif
 
   // as long as ros is connected, parent is active
-  //ROS_ERROR("debug image count %d",this->image_connect_count_);
+  //ROS_ERROR_NAMED("prosilica", "debug image count %d",this->image_connect_count_);
   if (!this->parentSensor->IsActive())
   {
     if ((*this->image_connect_count_) > 0)
@@ -147,7 +143,7 @@ void GazeboRosProsilica::OnNewImageFrame(const unsigned char *_image,
   }
   else
   {
-    //ROS_ERROR("camera_ new frame %s %s",this->parentSensor_->GetName().c_str(),this->frame_name_.c_str());
+    //ROS_ERROR_NAMED("prosilica", "camera_ new frame %s %s",this->parentSensor_->Name().c_str(),this->frame_name_.c_str());
 
     if (this->mode_ == "streaming")
     {
@@ -202,7 +198,7 @@ void GazeboRosProsilica::pollCallback(polled_camera::GetPolledImage::Request& re
     req.roi.height = this->height;
   }
   const unsigned char *src = NULL;
-  ROS_ERROR("roidebug %d %d %d %d", req.roi.x_offset, req.roi.y_offset, req.roi.width, req.roi.height);
+  ROS_ERROR_NAMED("prosilica", "roidebug %d %d %d %d", req.roi.x_offset, req.roi.y_offset, req.roi.width, req.roi.height);
 
   // signal sensor to start update
   (*this->image_connect_count_)++;
@@ -212,11 +208,7 @@ void GazeboRosProsilica::pollCallback(polled_camera::GetPolledImage::Request& re
   {
     {
       // Get a pointer to image data
-# if GAZEBO_MAJOR_VERSION >= 7
       src = this->parentSensor->Camera()->ImageData(0);
-# else
-      src = this->parentSensor->GetCamera()->GetImageData(0);
-# endif
 
       if (src)
       {
@@ -225,16 +217,12 @@ void GazeboRosProsilica::pollCallback(polled_camera::GetPolledImage::Request& re
         this->roiCameraInfoMsg = &info;
         this->roiCameraInfoMsg->header.frame_id = this->frame_name_;
 
-# if GAZEBO_MAJOR_VERSION >= 7
         common::Time roiLastRenderTime = this->parentSensor_->LastMeasurementTime();
-# else
-        common::Time roiLastRenderTime = this->parentSensor_->GetLastMeasurementTime();
-# endif
         this->roiCameraInfoMsg->header.stamp.sec = roiLastRenderTime.sec;
         this->roiCameraInfoMsg->header.stamp.nsec = roiLastRenderTime.nsec;
 
-        this->roiCameraInfoMsg->width  = req.roi.width; //this->parentSensor->GetImageWidth() ;
-        this->roiCameraInfoMsg->height = req.roi.height; //this->parentSensor->GetImageHeight();
+        this->roiCameraInfoMsg->width  = req.roi.width; //this->parentSensor->ImageWidth() ;
+        this->roiCameraInfoMsg->height = req.roi.height; //this->parentSensor->ImageHeight();
         // distortion
 #if ROS_VERSION_MINIMUM(1, 3, 0)
         this->roiCameraInfoMsg->distortion_model = "plumb_bob";
@@ -283,11 +271,7 @@ void GazeboRosProsilica::pollCallback(polled_camera::GetPolledImage::Request& re
         // copy data into image_msg_, then convert to roiImageMsg(image)
         this->image_msg_.header.frame_id    = this->frame_name_;
 
-# if GAZEBO_MAJOR_VERSION >= 7
         common::Time lastRenderTime = this->parentSensor_->LastMeasurementTime();
-# else
-        common::Time lastRenderTime = this->parentSensor_->GetLastMeasurementTime();
-# endif
         this->image_msg_.header.stamp.sec = lastRenderTime.sec;
         this->image_msg_.header.stamp.nsec = lastRenderTime.nsec;
 
@@ -311,11 +295,7 @@ void GazeboRosProsilica::pollCallback(polled_camera::GetPolledImage::Request& re
           // copy data into ROI image
           this->roiImageMsg = &image;
           this->roiImageMsg->header.frame_id = this->frame_name_;
-# if GAZEBO_MAJOR_VERSION >= 7
           common::Time roiLastRenderTime = this->parentSensor_->LastMeasurementTime();
-# else
-          common::Time roiLastRenderTime = this->parentSensor_->GetLastMeasurementTime();
-# endif
           this->roiImageMsg->header.stamp.sec = roiLastRenderTime.sec;
           this->roiImageMsg->header.stamp.nsec = roiLastRenderTime.nsec;
 

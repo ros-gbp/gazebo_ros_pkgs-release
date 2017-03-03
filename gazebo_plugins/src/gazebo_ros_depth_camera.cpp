@@ -64,7 +64,7 @@ void GazeboRosDepthCamera::Load(sensors::SensorPtr _parent, sdf::ElementPtr _sdf
   // Make sure the ROS node for Gazebo has already been initialized
   if (!ros::isInitialized())
   {
-    ROS_FATAL_STREAM("A ROS node for Gazebo has not been initialized, unable to load plugin. "
+    ROS_FATAL_STREAM_NAMED("depth_camera", "A ROS node for Gazebo has not been initialized, unable to load plugin. "
       << "Load the Gazebo system plugin 'libgazebo_ros_api_plugin.so' in the gazebo_ros package)");
     return;
   }
@@ -196,6 +196,7 @@ void GazeboRosDepthCamera::OnNewDepthFrame(const float *_image,
 # else
   this->depth_sensor_update_time_ = this->parentSensor->GetLastMeasurementTime();
 # endif
+
   if (this->parentSensor->IsActive())
   {
     if (this->point_cloud_connect_count_ <= 0 &&
@@ -236,6 +237,7 @@ void GazeboRosDepthCamera::OnNewRGBPointCloud(const float *_pcd,
 # else
   this->depth_sensor_update_time_ = this->parentSensor->GetLastMeasurementTime();
 # endif
+
   if (!this->parentSensor->IsActive())
   {
     if (this->point_cloud_connect_count_ > 0)
@@ -300,7 +302,7 @@ void GazeboRosDepthCamera::OnNewImageFrame(const unsigned char *_image,
   if (!this->initialized_ || this->height_ <=0 || this->width_ <=0)
     return;
 
-  //ROS_ERROR("camera_ new frame %s %s",this->parentSensor_->GetName().c_str(),this->frame_name_.c_str());
+  //ROS_ERROR_NAMED("depth_camera", "camera_ new frame %s %s",this->parentSensor_->GetName().c_str(),this->frame_name_.c_str());
 # if GAZEBO_MAJOR_VERSION >= 7
   this->sensor_update_time_ = this->parentSensor->LastMeasurementTime();
 # else
@@ -392,11 +394,7 @@ bool GazeboRosDepthCamera::FillPointCloudHelper(
   float* toCopyFrom = (float*)data_arg;
   int index = 0;
 
-# if GAZEBO_MAJOR_VERSION >= 7
   double hfov = this->parentSensor->DepthCamera()->HFOV().Radian();
-# else
-  double hfov = this->parentSensor->GetDepthCamera()->GetHFOV().Radian();
-# endif
   double fl = ((double)this->width) / (2.0 *tan(hfov/2.0));
 
   // convert depth to point cloud
@@ -500,7 +498,7 @@ bool GazeboRosDepthCamera::FillDepthImageHelper(
 
 void GazeboRosDepthCamera::PublishCameraInfo()
 {
-  ROS_DEBUG("publishing default camera info, then depth camera info");
+  ROS_DEBUG_NAMED("depth_camera", "publishing default camera info, then depth camera info");
   GazeboRosCameraUtils::PublishCameraInfo();
 
   if (this->depth_info_connect_count_ > 0)
