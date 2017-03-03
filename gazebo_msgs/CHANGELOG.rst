@@ -2,6 +2,9 @@
 Changelog for package gazebo_msgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2.5.10 (2017-03-03)
+-------------------
+
 2.5.9 (2017-02-20)
 ------------------
 * Removed all trailing whitespace
