@@ -1,3 +1,31 @@
+## gazebo_ros_pkgs (kinetic) - 2.5.10-0
+
+The packages in the `gazebo_ros_pkgs` repository were released into the `kinetic` distro by running `/usr/bin/bloom-release --track kinetic --ros-distro kinetic gazebo_ros_pkgs` on `Fri, 03 Mar 2017 19:07:44 -0000`
+
+These packages were released:
+- `gazebo_msgs`
+- `gazebo_plugins`
+- `gazebo_ros`
+- `gazebo_ros_control`
+- `gazebo_ros_pkgs`
+
+Version of package(s) in repository `gazebo_ros_pkgs`:
+
+- upstream repository: https://github.com/ros-simulation/gazebo_ros_pkgs.git
+- release repository: https://github.com/ros-gbp/gazebo_ros_pkgs-release.git
+- rosdistro version: `2.5.9-0`
+- old version: `2.5.9-0`
+- new version: `2.5.10-0`
+
+Versions of tools used:
+
+- bloom version: `0.5.24`
+- catkin_pkg version: `0.3.1`
+- rosdep version: `0.11.4`
+- rosdistro version: `0.4.7`
+- vcstools version: `0.1.38`
+
+
 ## gazebo_ros_pkgs (indigo) - 2.4.13-0
 
 The packages in the `gazebo_ros_pkgs` repository were released into the `indigo` distro by running `/usr/bin/bloom-release --track indigo --ros-distro indigo gazebo_ros_pkgs` on `Tue, 28 Feb 2017 16:58:28 -0000`
