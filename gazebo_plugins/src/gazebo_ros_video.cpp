@@ -115,7 +115,7 @@ namespace gazebo
 
   // Destructor
   GazeboRosVideo::~GazeboRosVideo() {
-    event::Events::DisconnectWorldUpdateBegin(update_connection_);
+    update_connection_.reset();
 
     // Custom Callback Queue
     queue_.clear();
@@ -217,7 +217,7 @@ namespace gazebo
       event::Events::ConnectPreRender(
           boost::bind(&GazeboRosVideo::UpdateChild, this));
 
-    ROS_INFO_NAMED("video", "GazeboRosVideo (%s, ns = %s) has started!",
+    ROS_INFO_NAMED("video", "GazeboRosVideo (%s, ns = %s) has started",
         gazebo_source.c_str(), robot_namespace_.c_str());
   }
 

@@ -125,7 +125,7 @@ bool DefaultRobotHWSim::initSim(
     {
       ROS_WARN_STREAM_NAMED("default_robot_hw_sim", "Joint " << transmissions[j].joints_[0].name_ <<
         " of transmission " << transmissions[j].name_ << " specifies multiple hardware interfaces. " <<
-        "Currently the default robot hardware simulation interface only supports one. Using the first entry!");
+        "Currently the default robot hardware simulation interface only supports one. Using the first entry");
       //continue;
     }
 
@@ -253,12 +253,12 @@ void DefaultRobotHWSim::readSim(ros::Time time, ros::Duration period)
     // Gazebo has an interesting API...
     if (joint_types_[j] == urdf::Joint::PRISMATIC)
     {
-      joint_position_[j] = sim_joints_[j]->GetAngle(0).Radian();
+      joint_position_[j] = sim_joints_[j]->Position(0);
     }
     else
     {
       joint_position_[j] += angles::shortest_angular_distance(joint_position_[j],
-                            sim_joints_[j]->GetAngle(0).Radian());
+                            sim_joints_[j]->Position(0));
     }
     joint_velocity_[j] = sim_joints_[j]->GetVelocity(0);
     joint_effort_[j] = sim_joints_[j]->GetForce((unsigned int)(0));
