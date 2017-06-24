@@ -2,6 +2,11 @@
 Changelog for package gazebo_ros
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2.4.14 (2017-06-24)
+-------------------
+* fixed conflicts
+* Contributors: Jose Luis Rivero
+
 2.4.13 (2017-02-28)
 -------------------
 
