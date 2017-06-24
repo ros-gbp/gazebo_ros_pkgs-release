@@ -2,54 +2,17 @@
 Changelog for package gazebo_ros_pkgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-2.5.13 (2017-06-24)
--------------------
-* Add catkin package(s) to provide the default version of Gazebo (`#571 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/571>`_)
-  * Added catkin package gazebo_dev which provides the cmake config of the installed Gazebo version
-* Contributors: Jose Luis Rivero
-
-2.5.12 (2017-04-25)
+2.4.14 (2017-06-24)
 -------------------
 
-2.5.11 (2017-04-18)
+2.4.13 (2017-02-28)
 -------------------
 
-2.5.10 (2017-03-03)
+2.4.12 (2016-11-27)
 -------------------
 
-2.5.9 (2017-02-20)
-------------------
-
-2.5.8 (2016-12-06)
-------------------
-
-2.5.7 (2016-06-10)
-------------------
-
-2.5.6 (2016-04-28)
-------------------
-
-2.5.5 (2016-04-27)
-------------------
-* merge indigo, jade to kinetic-devel
-* Update maintainer for Kinetic release
-* Contributors: Jose Luis Rivero, Steven Peters
-
-2.5.3 (2016-04-11)
-------------------
-
-2.5.2 (2016-02-25)
-------------------
-* merging from indigo-devel
-* 2.4.9
-* Generate changelog
-* Contributors: John Hsu, Jose Luis Rivero
-
-2.5.1 (2015-08-16)
-------------------
-
-2.5.0 (2015-04-30)
-------------------
+2.4.11 (2016-07-14)
+-------------------
 
 2.4.10 (2016-02-25)
 -------------------

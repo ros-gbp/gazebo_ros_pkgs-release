@@ -120,7 +120,7 @@ namespace gazebo
 
     /// \brief tf prefix
     private: std::string tf_prefix_;
-
+    
     /// \brief ROS image topic name
     protected: std::string image_topic_name_;
 
@@ -154,8 +154,6 @@ namespace gazebo
     protected: double distortion_k3_;
     protected: double distortion_t1_;
     protected: double distortion_t2_;
-
-    protected: bool border_crop_;
 
     protected: boost::shared_ptr<camera_info_manager::CameraInfoManager> camera_info_manager_;
 

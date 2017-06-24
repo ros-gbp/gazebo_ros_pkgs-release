@@ -67,7 +67,12 @@ void GazeboRosLaser::Load(sensors::SensorPtr _parent, sdf::ElementPtr _sdf)
   // load plugin
   RayPlugin::Load(_parent, this->sdf);
   // Get the world name.
+# if GAZEBO_MAJOR_VERSION >= 7
   std::string worldName = _parent->WorldName();
+# else
+  std::string worldName = _parent->GetWorldName();
+# endif
+
   this->world_ = physics::get_world(worldName);
   // save pointers
   this->sdf = _sdf;
@@ -83,7 +88,7 @@ void GazeboRosLaser::Load(sensors::SensorPtr _parent, sdf::ElementPtr _sdf)
 
   if (!this->sdf->HasElement("frameName"))
   {
-    ROS_INFO_NAMED("laser", "Laser plugin missing <frameName>, defaults to /world");
+    ROS_INFO("Laser plugin missing <frameName>, defaults to /world");
     this->frame_name_ = "/world";
   }
   else
@@ -92,7 +97,7 @@ void GazeboRosLaser::Load(sensors::SensorPtr _parent, sdf::ElementPtr _sdf)
 
   if (!this->sdf->HasElement("topicName"))
   {
-    ROS_INFO_NAMED("laser", "Laser plugin missing <topicName>, defaults to /world");
+    ROS_INFO("Laser plugin missing <topicName>, defaults to /world");
     this->topic_name_ = "/world";
   }
   else
@@ -103,12 +108,12 @@ void GazeboRosLaser::Load(sensors::SensorPtr _parent, sdf::ElementPtr _sdf)
     // Make sure the ROS node for Gazebo has already been initialized
   if (!ros::isInitialized())
   {
-    ROS_FATAL_STREAM_NAMED("laser", "A ROS node for Gazebo has not been initialized, unable to load plugin. "
+    ROS_FATAL_STREAM("A ROS node for Gazebo has not been initialized, unable to load plugin. "
       << "Load the Gazebo system plugin 'libgazebo_ros_api_plugin.so' in the gazebo_ros package)");
     return;
   }
 
-  ROS_INFO_NAMED("laser", "Starting Laser Plugin (ns = %s)", this->robot_namespace_.c_str() );
+  ROS_INFO ( "Starting Laser Plugin (ns = %s)!", this->robot_namespace_.c_str() );
   // ros callback queue for processing subscription
   this->deferred_load_thread_ = boost::thread(
     boost::bind(&GazeboRosLaser::LoadThread, this));
@@ -131,7 +136,7 @@ void GazeboRosLaser::LoadThread()
       this->tf_prefix_ = this->robot_namespace_;
       boost::trim_right_if(this->tf_prefix_,boost::is_any_of("/"));
   }
-  ROS_INFO_NAMED("laser", "Laser Plugin (ns = %s)  <tf_prefix_>, set to \"%s\"",
+  ROS_INFO("Laser Plugin (ns = %s)  <tf_prefix_>, set to \"%s\"",
              this->robot_namespace_.c_str(), this->tf_prefix_.c_str());
 
   // resolve tf prefix
@@ -162,7 +167,11 @@ void GazeboRosLaser::LaserConnect()
   this->laser_connect_count_++;
   if (this->laser_connect_count_ == 1)
     this->laser_scan_sub_ =
+# if GAZEBO_MAJOR_VERSION >= 7
       this->gazebo_node_->Subscribe(this->parent_ray_sensor_->Topic(),
+# else
+      this->gazebo_node_->Subscribe(this->parent_ray_sensor_->GetTopic(),
+# endif
                                     &GazeboRosLaser::OnScan, this);
 }
 
