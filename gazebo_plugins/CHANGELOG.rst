@@ -2,6 +2,9 @@
 Changelog for package gazebo_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2.4.15 (2017-08-09)
+-------------------
+
 2.4.14 (2017-06-24)
 -------------------
 * Fix distortion coefficients order (`#503 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/503>`_)
