@@ -53,7 +53,7 @@ void GazeboRosMultiCamera::Load(sensors::SensorPtr _parent,
   // Make sure the ROS node for Gazebo has already been initialized
   if (!ros::isInitialized())
   {
-    ROS_FATAL_STREAM("A ROS node for Gazebo has not been initialized, unable to load plugin. "
+    ROS_FATAL_STREAM_NAMED("multicamera", "A ROS node for Gazebo has not been initialized, unable to load plugin. "
       << "Load the Gazebo system plugin 'libgazebo_ros_api_plugin.so' in the gazebo_ros package)");
     return;
   }
@@ -77,20 +77,12 @@ void GazeboRosMultiCamera::Load(sensors::SensorPtr _parent,
     util->image_connect_count_ = this->image_connect_count_;
     util->image_connect_count_lock_ = this->image_connect_count_lock_;
     util->was_active_ = this->was_active_;
-# if GAZEBO_MAJOR_VERSION >= 7
     if (this->camera[i]->Name().find("left") != std::string::npos)
-# else
-    if (this->camera[i]->GetName().find("left") != std::string::npos)
-# endif
     {
       // FIXME: hardcoded, left hack_baseline_ 0
       util->Load(_parent, _sdf, "/left", 0.0);
     }
-# if GAZEBO_MAJOR_VERSION >= 7
     else if (this->camera[i]->Name().find("right") != std::string::npos)
-# else
-    else if (this->camera[i]->GetName().find("right") != std::string::npos)
-# endif
     {
       double hackBaseline = 0.0;
       if (_sdf->HasElement("hackBaseline"))
