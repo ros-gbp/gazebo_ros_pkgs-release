@@ -19,7 +19,9 @@
   <arg name="pub_clock_frequency" default="100"/>
 
   <!-- set use_sim_time flag -->
-  <param name="/use_sim_time" value="$(arg use_sim_time)"/>
+  <group if="$(arg use_sim_time)">
+    <param name="/use_sim_time" value="true" />
+  </group>
 
   <!-- set command arguments -->
   <arg unless="$(arg paused)" name="command_arg1" value=""/>

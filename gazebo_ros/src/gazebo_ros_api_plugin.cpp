@@ -173,7 +173,7 @@ void GazeboRosApiPlugin::loadGazeboRosApiPlugin(std::string world_name)
   world_ = gazebo::physics::get_world(world_name);
   if (!world_)
   {
-    //ROS_ERROR_NAMED("api_plugin", "world name: [%s]",world->Name().c_str());
+    //ROS_ERROR_NAMED("api_plugin", "world name: [%s]",world->GetName().c_str());
     // connect helper function to signal for scheduling torque/forces, etc
     ROS_FATAL_NAMED("api_plugin", "cannot load gazebo ros api server plugin, physics::get_world() fails to return world");
     return;
@@ -500,8 +500,7 @@ void GazeboRosApiPlugin::advertiseServices()
 
 
   // set param for use_sim_time if not set by user already
-  if(!(nh_->hasParam("/use_sim_time")))
-    nh_->setParam("/use_sim_time", true);
+  nh_->setParam("/use_sim_time", true);
 
   // todo: contemplate setting environment variable ROBOT=sim here???
   nh_->getParam("pub_clock_frequency", pub_clock_frequency_);
@@ -1035,22 +1034,9 @@ bool GazeboRosApiPlugin::getLinkProperties(gazebo_msgs::GetLinkProperties::Reque
     /// @todo: validate
     res.gravity_mode = body->GetGravityMode();
 
-    gazebo::physics::InertialPtr inertia = body->GetInertial();
-
-#if GAZEBO_MAJOR_VERSION >= 8
-    res.mass = body->GetInertial()->Mass();
-
-    res.ixx = inertia->IXX();
-    res.iyy = inertia->IYY();
-    res.izz = inertia->IZZ();
-    res.ixy = inertia->IXY();
-    res.ixz = inertia->IXZ();
-    res.iyz = inertia->IYZ();
-
-    ignition::math::Vector3d com = body->GetInertial()->CoG();
-#else
     res.mass = body->GetInertial()->GetMass();
 
+    gazebo::physics::InertialPtr inertia = body->GetInertial();
     res.ixx = inertia->GetIXX();
     res.iyy = inertia->GetIYY();
     res.izz = inertia->GetIZZ();
@@ -1059,7 +1045,6 @@ bool GazeboRosApiPlugin::getLinkProperties(gazebo_msgs::GetLinkProperties::Reque
     res.iyz = inertia->GetIYZ();
 
     ignition::math::Vector3d com = body->GetInertial()->GetCoG().Ign();
-#endif
     res.com.position.x = com.X();
     res.com.position.y = com.Y();
     res.com.position.z = com.Z();
