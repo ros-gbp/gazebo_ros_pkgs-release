@@ -81,7 +81,11 @@ void GazeboRosJointStatePublisher::Load ( physics::ModelPtr _parent, sdf::Elemen
     last_update_time_ = this->world_->GetSimTime();
 
     for ( unsigned int i = 0; i< joint_names_.size(); i++ ) {
-        joints_.push_back ( this->parent_->GetJoint ( joint_names_[i] ) );
+        physics::JointPtr joint = this->parent_->GetJoint(joint_names_[i]);
+        if (!joint) {
+            ROS_FATAL_NAMED("joint_state_publisher", "Joint %s does not exist!", joint_names_[i].c_str());
+        }
+        joints_.push_back ( joint );
         ROS_INFO_NAMED("joint_state_publisher", "GazeboRosJointStatePublisher is going to publish joint: %s", joint_names_[i].c_str() );
     }
 
@@ -120,7 +124,7 @@ void GazeboRosJointStatePublisher::publishJointStates() {
 
     for ( int i = 0; i < joints_.size(); i++ ) {
         physics::JointPtr joint = joints_[i];
-        math::Angle angle = joint->GetAngle ( 0 );
+        ignition::math::Angle angle = joint->GetAngle ( 0 ).Ign();
         joint_state_.name[i] = joint->GetName();
         joint_state_.position[i] = angle.Radian () ;
     }
