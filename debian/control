@@ -1,0 +1,12 @@
+Source: ros-lunar-gazebo-plugins
+Section: misc
+Priority: extra
+Maintainer: Jose Luis Rivero <jrivero@osrfoundation.org>
+Build-Depends: debhelper (>= 9.0.0), ros-lunar-angles, ros-lunar-camera-info-manager, ros-lunar-catkin, ros-lunar-cv-bridge, ros-lunar-diagnostic-updater, ros-lunar-dynamic-reconfigure, ros-lunar-gazebo-dev, ros-lunar-gazebo-msgs, ros-lunar-geometry-msgs, ros-lunar-image-transport, ros-lunar-message-generation, ros-lunar-nav-msgs, ros-lunar-nodelet, ros-lunar-polled-camera, ros-lunar-rosconsole, ros-lunar-roscpp, ros-lunar-rosgraph-msgs, ros-lunar-rospy, ros-lunar-rostest, ros-lunar-sensor-msgs, ros-lunar-std-msgs, ros-lunar-std-srvs, ros-lunar-tf, ros-lunar-tf2-ros, ros-lunar-trajectory-msgs, ros-lunar-urdf
+Homepage: http://gazebosim.org/tutorials?cat=connect_ros
+Standards-Version: 3.9.2
+
+Package: ros-lunar-gazebo-plugins
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-lunar-angles, ros-lunar-camera-info-manager, ros-lunar-cv-bridge, ros-lunar-diagnostic-updater, ros-lunar-dynamic-reconfigure, ros-lunar-gazebo-dev, ros-lunar-gazebo-msgs, ros-lunar-geometry-msgs, ros-lunar-image-transport, ros-lunar-message-runtime, ros-lunar-nav-msgs, ros-lunar-nodelet, ros-lunar-polled-camera, ros-lunar-rosconsole, ros-lunar-roscpp, ros-lunar-rosgraph-msgs, ros-lunar-rospy, ros-lunar-sensor-msgs, ros-lunar-std-msgs, ros-lunar-std-srvs, ros-lunar-tf, ros-lunar-tf2-ros, ros-lunar-trajectory-msgs, ros-lunar-urdf
+Description: Robot-independent Gazebo plugins for sensors, motors and dynamic reconfigurable components.
