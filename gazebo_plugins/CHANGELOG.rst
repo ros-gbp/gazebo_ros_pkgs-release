@@ -2,28 +2,37 @@
 Changelog for package gazebo_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-2.7.3 (2017-12-11)
-------------------
-* Fix gazebo8 warnings part 4: convert remaining local variables in plugins to ign-math (lunar-devel) (`#634 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/634>`_)
-* Fix gazebo8 warnings part 3: more ign-math in plugins (lunar-devel) (`#632 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/632>`_)
-* Fix gazebo8 warnings part 2: replace private member gazebo::math types with ignition (lunar-devel) (`#630 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/630>`_)
-* Replace Events::Disconnect* with pointer reset (`#626 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/626>`_)
-* joint_state_publisher: error in case a joint is not found (`#609 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/609>`_)
-* Contributors: Jose Luis Rivero, Kenneth Blomqvist
+2.5.14 (2017-12-11)
+-------------------
+* for gazebo8+, call functions without Get (`#639 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/639>`_)
+* Fix gazebo8 warnings part 4: convert remaining local variables in plugins to ign-math (`#633 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/633>`_)
+* Fix gazebo8 warnings part 3: more ign-math in plugins (`#631 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/631>`_)
+* Fix gazebo8 warnings part 2: replace private member gazebo::math types with ignition (`#628 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/628>`_)
+* Replace Events::Disconnect* with pointer reset (`#623 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/623>`_)
+* Merge pull request `#542 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/542>`_ from davetcoleman/kinetic-gazebo7-only
+  Remove compiler directive flags for < GAZEBO 7
+* Contributors: Dave Coleman, Steven Peters
 
-2.7.2 (2017-05-21)
-------------------
-* Revert gazebo8 changes in Lunar and back to use gazebo7 (`#583 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/583>`_)
-* Contributors: Jose Luis Rivero
-
-2.7.1 (2017-04-28)
-------------------
-* Fixes for compilation and warnings in Lunar-devel  (`#573 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/573>`_)
-  Multiple fixes for compilation and warnings coming from Gazebo8 and ignition-math3
+2.5.13 (2017-06-24)
+-------------------
+* Fix inverted height in block laser plugin (`#582 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/582>`_)
+* Allow disabling distorted camera border crop (and associated tests) (`#572 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/572>`_)
 * Add an IMU sensor plugin that inherits from SensorPlugin (`#363 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/363>`_)
+  * now the plugin works with multiple robots
+  * using GetParentName name instead of GetScopedName
+  * added comments to highlight the differents between GazeboRosImuSensor and GazeboRosIMU
+  * now the message header is properly handled, using bodyName parameter as frame_id
+  * added check on gazebo version
+  * added check for sensor null pointer
+  * changed deprecated functions for gazebo version >= 6
+  * fixed version check
+  * added missing sensor variable for LastUpdateTime() function call
+  * considering '/' included in the robotNamespace
+  * replaced "bodyFrame" with "frameName"
 * Less exciting console output (`#561 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/561>`_)
-* Add catkin package(s) to provide the default version of Gazebo - take II (kinetic-devel) (`#571 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/571>`_)
-* Contributors: Alessandro Settimi, Dave Coleman, Jose Luis Rivero
+* Add catkin package(s) to provide the default version of Gazebo (`#571 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/571>`_)
+  * gazebo_dev: added execution dependency gazebo
+* Contributors: Adam Allevato, Alessandro Settimi, Dave Coleman, Jose Luis Rivero, Shohei Fujii
 
 2.5.12 (2017-04-25)
 -------------------
