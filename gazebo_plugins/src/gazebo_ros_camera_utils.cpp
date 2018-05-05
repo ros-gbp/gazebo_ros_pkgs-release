@@ -353,7 +353,11 @@ void GazeboRosCameraUtils::LoadThread()
 // Set Horizontal Field of View
 void GazeboRosCameraUtils::SetHFOV(const std_msgs::Float64::ConstPtr& hfov)
 {
+#if GAZEBO_MAJOR_VERSION >= 7
   this->camera_->SetHFOV(ignition::math::Angle(hfov->data));
+#else
+  this->camera_->SetHFOV(gazebo::math::Angle(hfov->data));
+#endif
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -406,20 +410,30 @@ void GazeboRosCameraUtils::Init()
     this->update_period_ = 0.0;
 
   // set buffer size
-  if (this->format_ == "L8")
+  if (this->format_ == "L8" || this->format_ == "L_INT8")
   {
     this->type_ = sensor_msgs::image_encodings::MONO8;
     this->skip_ = 1;
   }
-  else if (this->format_ == "R8G8B8")
+  else if (this->format_ == "L16" || this->format_ == "L_INT16")
+  {
+    this->type_ = sensor_msgs::image_encodings::MONO16;
+    this->skip_ = 2;
+  }
+  else if (this->format_ == "R8G8B8" || this->format_ == "RGB_INT8")
   {
     this->type_ = sensor_msgs::image_encodings::RGB8;
     this->skip_ = 3;
   }
-  else if (this->format_ == "B8G8R8")
+  else if (this->format_ == "B8G8R8" || this->format_ == "BGR_INT8")
   {
     this->type_ = sensor_msgs::image_encodings::BGR8;
     this->skip_ = 3;
+  }
+  else if (this->format_ == "R16G16B16" ||  this->format_ == "RGB_INT16")
+  {
+    this->type_ = sensor_msgs::image_encodings::RGB16;
+    this->skip_ = 6;
   }
   else if (this->format_ == "BAYER_RGGB8")
   {

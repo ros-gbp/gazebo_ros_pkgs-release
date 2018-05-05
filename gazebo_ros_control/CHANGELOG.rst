@@ -2,16 +2,35 @@
 Changelog for package gazebo_ros_control
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-2.5.14 (2017-12-11)
--------------------
-* Replace Events::Disconnect* with pointer reset (`#623 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/623>`_)
-* Contributors: Steven Peters
+2.8.1 (2018-05-05)
+------------------
+* Don't ignore robotNamespace in gazebo_ros_control nodes (lunar-devel) (`#706 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/706>`_)
+  This commit restores the intended behavior, i.e., the parameters will now read from <robot_name>/..., where <robot_name> is specified via the robotNamespace plugin parameter or the parent name.
+* add physics type for dart with joint velocity interface (`#701 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/701>`_)
+* Contributors: Jose Luis Rivero
 
-2.5.13 (2017-06-24)
--------------------
+2.7.4 (2018-02-12)
+------------------
+* Fix last gazebo8 warnings! (lunar-devel) (`#664 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/664>`_)
+* Fix gazebo8 warnings part 7: retry `#642 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/642>`_ on lunar (`#660 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/660>`_)
+* Contributors: Jose Luis Rivero, Steven Peters
+
+2.7.3 (2017-12-11)
+------------------
+* Replace Events::Disconnect* with pointer reset (`#626 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/626>`_)
+* Contributors: Jose Luis Rivero
+
+2.7.2 (2017-05-21)
+------------------
+* Revert gazebo8 changes in Lunar and back to use gazebo7 (`#583 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/583>`_)
+* Contributors: Jose Luis Rivero
+
+2.7.1 (2017-04-28)
+------------------
+* Fixes for compilation and warnings in Lunar-devel  (`#573 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/573>`_)
+  Multiple fixes for compilation and warnings coming from Gazebo8 and ignition-math3
 * Less exciting console output (`#561 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/561>`_)
-* Add catkin package(s) to provide the default version of Gazebo (`#571 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/571>`_)
-  * Added catkin package gazebo_dev which provides the cmake config of the installed Gazebo version
+* Add catkin package(s) to provide the default version of Gazebo - take II (kinetic-devel) (`#571 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/571>`_)
 * Contributors: Dave Coleman, Jose Luis Rivero
 
 2.5.12 (2017-04-25)

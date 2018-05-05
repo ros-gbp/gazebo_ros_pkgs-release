@@ -82,7 +82,11 @@ void GazeboRosBlockLaser::Load(sensors::SensorPtr _parent, sdf::ElementPtr _sdf)
   std::string worldName = _parent->WorldName();
   this->world_ = physics::get_world(worldName);
 
+#if GAZEBO_MAJOR_VERSION >= 8
+  last_update_time_ = this->world_->SimTime();
+#else
   last_update_time_ = this->world_->GetSimTime();
+#endif
 
   this->node_ = transport::NodePtr(new transport::Node());
   this->node_->Init(worldName);
@@ -207,6 +211,12 @@ void GazeboRosBlockLaser::OnNewLaserScans()
   if (this->topic_name_ != "")
   {
     common::Time sensor_update_time = this->parent_sensor_->LastUpdateTime();
+    if (sensor_update_time < last_update_time_)
+    {
+        ROS_WARN_NAMED("block_laser", "Negative sensor update time difference detected.");
+        last_update_time_ = sensor_update_time;
+    }
+
     if (last_update_time_ < sensor_update_time)
     {
       this->PutLaserData(sensor_update_time);
