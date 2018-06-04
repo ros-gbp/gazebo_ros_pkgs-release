@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 3.6.3)
 project(gazebo_plugins)
 
 option(ENABLE_DISPLAY_TESTS "Enable the building of tests that requires a display" OFF)
@@ -29,6 +29,27 @@ find_package(catkin REQUIRED COMPONENTS
   camera_info_manager
   std_msgs
 )
+
+# Through transitive dependencies in the packages above, gazebo_plugins depends
+# on Simbody.  There is a bug in the Ubuntu Artful (17.10) version of the
+# Simbody package where it includes /usr/lib/libblas.so and
+# /usr/lib/liblapack.so in the CMake list of libraries even though neither of
+# those two paths exist (they both really live in /usr/lib/<arch>-linux-gnu).
+# We remove these two during build-time on artful below; this works because
+# they both will get resolved to the proper paths during runtime linking.
+find_program(LSB_RELEASE_EXEC lsb_release)
+if(NOT LSB_RELEASE_EXEC STREQUAL "LSB_RELEASE_EXEC-NOTFOUND")
+  execute_process(COMMAND ${LSB_RELEASE_EXEC} -cs
+    OUTPUT_VARIABLE OS_CODENAME
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+  )
+  if(OS_CODENAME STREQUAL "artful")
+    list(FILTER catkin_LIBRARIES EXCLUDE REGEX "/usr/lib/libblas.so")
+    list(FILTER catkin_LIBRARIES EXCLUDE REGEX "/usr/lib/liblapack.so")
+    list(FILTER GAZEBO_LIBRARIES EXCLUDE REGEX "/usr/lib/libblas.so")
+    list(FILTER GAZEBO_LIBRARIES EXCLUDE REGEX "/usr/lib/liblapack.so")
+  endif()
+endif()
 
 include (FindPkgConfig)
 if (PKG_CONFIG_FOUND)
@@ -87,9 +108,7 @@ catkin_package(
   gazebo_ros_utils 
   gazebo_ros_camera_utils 
   gazebo_ros_camera 
-  gazebo_ros_triggered_camera
   gazebo_ros_multicamera 
-  gazebo_ros_triggered_multicamera
   gazebo_ros_depth_camera 
   gazebo_ros_openni_kinect 
   gazebo_ros_gpu_laser 
@@ -105,7 +124,6 @@ catkin_package(
   gazebo_ros_projector
   gazebo_ros_prosilica
   gazebo_ros_force
-  gazebo_ros_joint_trajectory
   gazebo_ros_joint_state_publisher
   gazebo_ros_joint_pose_trajectory
   gazebo_ros_diff_drive
@@ -176,11 +194,6 @@ add_library(gazebo_ros_camera src/gazebo_ros_camera.cpp)
 add_dependencies(gazebo_ros_camera ${PROJECT_NAME}_gencfg)
 target_link_libraries(gazebo_ros_camera gazebo_ros_camera_utils CameraPlugin ${catkin_LIBRARIES})
 
-add_library(gazebo_ros_triggered_camera src/gazebo_ros_triggered_camera.cpp)
-add_dependencies(gazebo_ros_triggered_camera ${PROJECT_NAME}_gencfg)
-target_link_libraries(gazebo_ros_triggered_camera gazebo_ros_camera_utils ${GAZEBO_LIBRARIES} CameraPlugin ${catkin_LIBRARIES})
-
-
 if (NOT GAZEBO_VERSION VERSION_LESS 6.0)
   add_library(gazebo_ros_elevator src/gazebo_ros_elevator.cpp)
   add_dependencies(gazebo_ros_elevator ${PROJECT_NAME}_gencfg)
@@ -190,10 +203,6 @@ endif()
 add_library(gazebo_ros_multicamera src/gazebo_ros_multicamera.cpp)
 add_dependencies(gazebo_ros_multicamera ${PROJECT_NAME}_gencfg)
 target_link_libraries(gazebo_ros_multicamera gazebo_ros_camera_utils MultiCameraPlugin ${catkin_LIBRARIES})
-
-add_library(gazebo_ros_triggered_multicamera src/gazebo_ros_triggered_multicamera.cpp)
-add_dependencies(gazebo_ros_triggered_multicamera ${PROJECT_NAME}_gencfg)
-target_link_libraries(gazebo_ros_triggered_multicamera gazebo_ros_camera_utils gazebo_ros_triggered_camera ${GAZEBO_LIBRARIES} MultiCameraPlugin ${catkin_LIBRARIES})
 
 add_library(gazebo_ros_depth_camera src/gazebo_ros_depth_camera.cpp)
 add_dependencies(gazebo_ros_depth_camera ${PROJECT_NAME}_gencfg)
@@ -244,11 +253,6 @@ target_link_libraries(gazebo_ros_prosilica gazebo_ros_camera_utils CameraPlugin 
 
 add_library(gazebo_ros_force src/gazebo_ros_force.cpp)
 target_link_libraries(gazebo_ros_force ${catkin_LIBRARIES} ${Boost_LIBRARIES})
-
-add_library(gazebo_ros_joint_trajectory src/gazebo_ros_joint_trajectory.cpp)
-add_dependencies(gazebo_ros_joint_trajectory ${catkin_EXPORTED_TARGETS})
-target_link_libraries(gazebo_ros_joint_trajectory ${catkin_LIBRARIES} ${Boost_LIBRARIES})
-
 
 add_library(gazebo_ros_joint_state_publisher src/gazebo_ros_joint_state_publisher.cpp)
 set_target_properties(gazebo_ros_joint_state_publisher PROPERTIES LINK_FLAGS "${ld_flags}")
@@ -322,7 +326,6 @@ install(TARGETS
   gazebo_ros_projector
   gazebo_ros_prosilica
   gazebo_ros_force
-  gazebo_ros_joint_trajectory
   gazebo_ros_joint_state_publisher
   gazebo_ros_joint_pose_trajectory
   gazebo_ros_diff_drive
@@ -407,9 +410,5 @@ if (CATKIN_ENABLE_TESTING)
                       test/camera/distortion_pincushion.test
                       test/camera/distortion_pincushion.cpp)
     target_link_libraries(distortion_pincushion_test ${catkin_LIBRARIES})
-    add_rostest_gtest(triggered-camera-test
-                      test/camera/triggered_camera.test
-                      test/camera/triggered_camera.cpp)
-    target_link_libraries(triggered-camera-test ${catkin_LIBRARIES})
   endif()
 endif()

@@ -211,15 +211,6 @@ details about which code should be submitted to this repository.
    - ***example:*** gazebo_plugins/test/tricycle_drive/
               xacro, launch, world, rviz, etc.
 
- * ***gazebo_ros_triggered_camera / gazebo_ros_triggered_multicamera***
-   - ***description:*** These camera sensors do not publish unless triggered. They have an
-     additional topic (default name `image_trigger`) that subscribes to std_msgs/Empty messages
-     and will publish a single update after being triggered. Its maximum update rate is currently
-     set by the <update_rate> sdf tag in the <sensor> block.
-     Publishes: sensor_msgs::Image, sensor_msgs::CameraInfo
-   - ***status:*** maintained
-   - ***example:*** gazebo_plugins/test/camera/triggered_camera.*
-
  * ***gazebo_ros_video***
    - ***description:*** Video plugin for displaying ROS image topics on Ogre textures
    - ***status:*** maintained
@@ -228,12 +219,6 @@ details about which code should be submitted to this repository.
 
 
 ## List of deprecated plugins (to be removed)
-
- * ***gazebo_ros_joint_trajectory***
-    - ***description:*** migrate to gazebo_ros_joint_pose_trajectory
-    - ***status:*** deprecated. To be removed in Lunar.
-    - ***gazebo plugin:*** --
-    - ***example:*** --
 
  * ***camera_synchronizer***
  * ***vision_reconfigure***

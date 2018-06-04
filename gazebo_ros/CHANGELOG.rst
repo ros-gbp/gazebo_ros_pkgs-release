@@ -2,15 +2,25 @@
 Changelog for package gazebo_ros
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-2.7.5 (2018-06-04)
+2.8.3 (2018-06-04)
 ------------------
-* Use generic SIGINT parameter in kill command for gazebo script (`#711 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/711>`_)
+* Use generic SIGINT parameter in kill command for gazebo script (melodic-devel) (`#724 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/724>`_)
   * Use generic SIGINT parameter in kill command for gazebo script
   * redirect to kill command to std_err
+* Contributors: Jose Luis Rivero
+
+2.8.2 (2018-05-09)
+------------------
+* Fix the build on Ubuntu Artful. (`#715 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/715>`_)
+  Artful has some bugs in its cmake files for Simbody that
+  cause it to fail the build.  If we are on artful, remove
+  the problematic entries.
+  Signed-off-by: Chris Lalancette <clalancette@openrobotics.org>
+* Contributors: Chris Lalancette
+
+2.8.1 (2018-05-05)
+------------------
 * Parameter to disable ROS network interaction from/to Gazebo (lunar-devel) (`#704 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/704>`_)
-  * Merge initial part of 585 PR
-  * Missing parts from the port to lunar
-  * Fix last remaining code from merge
 * Load the libgazebo_ros_api_plugin when starting gzclient so that the ROS event loop will turn over, which is required when you have a client-side Gazebo plugin that uses ROS. (`#676 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/676>`_)
 * Pass verbose argument to gzclient (`#677 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/677>`_)
 * strip comments from parsed urdf (`#698 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/698>`_)
