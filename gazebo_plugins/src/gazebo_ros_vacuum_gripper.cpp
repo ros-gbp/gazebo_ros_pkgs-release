@@ -179,8 +179,13 @@ void GazeboRosVacuumGripper::UpdateChild()
   }
   // apply force
   lock_.lock();
+#if GAZEBO_MAJOR_VERSION >= 8
+  ignition::math::Pose3d parent_pose = link_->WorldPose();
+  physics::Model_V models = world_->Models();
+#else
   ignition::math::Pose3d parent_pose = link_->GetWorldPose().Ign();
   physics::Model_V models = world_->GetModels();
+#endif
   for (size_t i = 0; i < models.size(); i++) {
     if (models[i]->GetName() == link_->GetName() ||
         models[i]->GetName() == parent_->GetName())
@@ -189,14 +194,21 @@ void GazeboRosVacuumGripper::UpdateChild()
     }
     physics::Link_V links = models[i]->GetLinks();
     for (size_t j = 0; j < links.size(); j++) {
+#if GAZEBO_MAJOR_VERSION >= 8
+      ignition::math::Pose3d link_pose = links[j]->WorldPose();
+#else
       ignition::math::Pose3d link_pose = links[j]->GetWorldPose().Ign();
+#endif
       ignition::math::Pose3d diff = parent_pose - link_pose;
       double norm = diff.Pos().Length();
       if (norm < 0.05) {
-        links[j]->SetLinearAccel(link_->GetWorldLinearAccel());
-        links[j]->SetAngularAccel(link_->GetWorldAngularAccel());
+#if GAZEBO_MAJOR_VERSION >= 8
+        links[j]->SetLinearVel(link_->WorldLinearVel());
+        links[j]->SetAngularVel(link_->WorldAngularVel());
+#else
         links[j]->SetLinearVel(link_->GetWorldLinearVel());
         links[j]->SetAngularVel(link_->GetWorldAngularVel());
+#endif
         double norm_force = 1 / norm;
         if (norm < 0.01) {
           // apply friction like force
