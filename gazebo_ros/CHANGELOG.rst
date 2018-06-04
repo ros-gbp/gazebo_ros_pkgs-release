@@ -2,170 +2,52 @@
 Changelog for package gazebo_ros
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-2.8.2 (2018-05-09)
-------------------
-* Fix the build on Ubuntu Artful. (`#715 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/715>`_)
-  Artful has some bugs in its cmake files for Simbody that
-  cause it to fail the build.  If we are on artful, remove
-  the problematic entries.
-  Signed-off-by: Chris Lalancette <clalancette@openrobotics.org>
-* Contributors: Chris Lalancette
-
-2.8.1 (2018-05-05)
-------------------
-* Parameter to disable ROS network interaction from/to Gazebo (lunar-devel) (`#704 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/704>`_)
-* Load the libgazebo_ros_api_plugin when starting gzclient so that the ROS event loop will turn over, which is required when you have a client-side Gazebo plugin that uses ROS. (`#676 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/676>`_)
-* Pass verbose argument to gzclient (`#677 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/677>`_)
-* strip comments from parsed urdf (`#698 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/698>`_)
-  Remove comments from urdf before trying to find packages. Otherwise non-existant packages will produce a fatal error, even though they are not used.
+2.4.16 (2018-06-04)
+-------------------
+* gazebo_ros_api_plugin: improve plugin xml parsing (`#731 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/731>`_)
+  An xml comment that start with plugin causes a seg-fault:
+  <!--plugin-->
+  or
+  <!--plugin filename="lib.so"/-->
+  This fixes the xml parsing to not try to add child elements
+  to xml comments.
 * Contributors: Jose Luis Rivero
 
-2.7.4 (2018-02-12)
-------------------
-* Fix last gazebo8 warnings! (lunar-devel) (`#664 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/664>`_)
-* Fix for relative frame errors (lunar-devel) (`#663 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/663>`_)
-* Fix gazebo8 warnings part 7: retry `#642 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/642>`_ on lunar (`#660 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/660>`_)
-* Fix gazebo8 warnings part 10: ifdefs for GetModel, GetEntity, Light (lunar-devel) (`#657 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/657>`_)
-* gazebo8 warnings: ifdefs for Get.*Vel() (`#655 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/655>`_)
-* [gazebo_ros] don't overwrite parameter "use_sim_time" (lunar-devel) (`#607 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/607>`_)
-* Fix gazebo8 warnings part 8: ifdef's for GetWorldPose (lunar-devel) (`#652 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/652>`_)
-* Prevents GAZEBO_MODEL_DATABASE_URI from being overwritten (`#649 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/649>`_)
-* for gazebo8+, call functions without Get (`#640 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/640>`_)
-* Contributors: Jose Luis Rivero, Steven Peters
-
-2.7.3 (2017-12-11)
-------------------
-* gazebo_ros_api_plugin: improve plugin xml parsing (`#627 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/627>`_)
-* Fix gazebo8 warnings part 5: ignition math in gazebo_ros (lunar-devel) (`#636 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/636>`_)
-* Fix gazebo8 warnings part 4: convert remaining local variables in plugins to ign-math (lunar-devel) (`#634 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/634>`_)
-* gazebo_ros: fix support for python3 (`#629 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/629>`_)
-* Replace Events::Disconnect* with pointer reset (`#626 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/626>`_)
-* Install spawn_model using catkin_install_python (`#624 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/624>`_)
-* Quote arguments to echo in libcommon.sh (`#591 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/591>`_)
+2.4.15 (2017-08-09)
+-------------------
+* Fix build (`#600 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/600>`_)
+  This reverts commit 3f12a2ec3c4e0d91541bd533a0d6290d9d4d0558.
 * Contributors: Jose Luis Rivero
 
-2.7.2 (2017-05-21)
-------------------
-* Revert gazebo8 changes in Lunar and back to use gazebo7 (`#583 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/583>`_)
+2.4.14 (2017-06-24)
+-------------------
+* fixed conflicts
 * Contributors: Jose Luis Rivero
 
-2.7.1 (2017-04-28)
-------------------
-* Fixes for compilation and warnings in Lunar-devel  (`#573 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/573>`_)
-  Multiple fixes for compilation and warnings coming from Gazebo8 and ignition-math3
-* Add catkin package(s) to provide the default version of Gazebo - take II (kinetic-devel) (`#571 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/571>`_)
-* Contributors: Jose Luis Rivero
-
-2.5.12 (2017-04-25)
+2.4.13 (2017-02-28)
 -------------------
 
-2.5.11 (2017-04-18)
+2.4.12 (2016-11-27)
 -------------------
-* Changed the spawn model methods to spawn also lights. (`#511 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/511>`_)
-* Change build system to set DEPEND on Gazebo/SDFormat (fix catkin warning)
-  Added missing DEPEND clauses to catkin_package to fix gazebo catkin warning.
-  Note that after the change problems could appear related to -lpthreads
-  errors. This is an known issue related to catkin:
-  https://github.com/ros/catkin/issues/856.
-* Use correct logerr method (`#557 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/557>`_)
-* Contributors: Alessandro Ambrosano, Dave Coleman, Gary Servin
+* Fixed getLinkState service's angular velocity return
+* Contributors: Jared
 
-2.5.10 (2017-03-03)
+2.4.11 (2016-07-14)
 -------------------
-* Revert catkin warnings to fix regressions (problems with catkin -lpthreads errors)
-  For reference and reasons, please check:
-  https://discourse.ros.org/t/need-to-sync-new-release-of-rqt-topic-indigo-jade-kinetic/1410/4
-  * Revert "Fix gazebo catkin warning, cleanup CMakeLists (`#537 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/537>`_)"
-  This reverts commit 5a0305fcb97864b66bc2e587fc0564435b4f2034.
-  * Revert "Fix gazebo and sdformat catkin warnings"
-  This reverts commit 11f95d25dcd32faccd2401d45c722f7794c7542c.
-* Contributors: Jose Luis Rivero
-
-2.5.9 (2017-02-20)
-------------------
-* Fix gazebo catkin warning, cleanup CMakeLists (`#537 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/537>`_)
-* Namespace console output (`#543 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/543>`_)
-* Removed all trailing whitespace
-* Contributors: Dave Coleman
-
-2.5.8 (2016-12-06)
-------------------
-* Workaround to support gazebo and ROS arguments in the command line
-* Fix ROS remapping by reverting "Remove ROS remapping arguments from gazebo_ros launch scripts.
-* Fixed getlinkstate service's angular velocity return
-* Honor GAZEBO_MASTER_URI in gzserver and gzclient
-* Contributors: Jared, Jon Binney, Jordan Liviero, Jose Luis Rivero, Martin Pecka
-
-2.5.7 (2016-06-10)
-------------------
-
-2.5.6 (2016-04-28)
-------------------
-* Remove deprecated spawn_gazebo_model service
-* Contributors: Steven Peters
-
-2.5.5 (2016-04-27)
-------------------
-* merge indigo, jade to kinetic-devel
-* Upgrade to gazebo 7 and remove deprecated driver_base dependency
-  * Upgrade to gazebo 7 and remove deprecated driver_base dependency
-  * disable gazebo_ros_control until dependencies are met
-  * Remove stray backslash
-* spawn_model: adding -b option to bond to the model and delete it on sigint
-* Update maintainer for Kinetic release
-* Allow respawning gazebo node.
-* Contributors: Hugo Boyer, Isaac IY Saito, Jackie Kay, Jonathan Bohren, Jose Luis Rivero, Steven Peters
-
-2.5.3 (2016-04-11)
-------------------
-* Include binary in runtime
-* Remove ROS remapping arguments from gazebo_ros launch scripts.
-* Contributors: Jose Luis Rivero, Martin Pecka
-
-2.5.2 (2016-02-25)
-------------------
-* merging from indigo-devel
-* Merge pull request `#302 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/302>`_ from maxbader/jade-devel-GetModelState
-  Header for GetModelState service request for jade-devel
-* Fix invalid signal name on OS X
-  scripts/gazebo: line 30: kill: SIGINT: invalid signal specification
-* Fix invalid signal name on OS X
-  scripts/gazebo: line 30: kill: SIGINT: invalid signal specification
-* Restart package resolving from last position, do not start all over.
-* 2.4.9
-* Generate changelog
-* Import changes from jade-branch
-* Add range world and launch file
-* fix crash
-* Set GAZEBO_CXX_FLAGS to fix c++11 compilation errors
-* GetModelState modification for jade
-* Contributors: Bence Magyar, Boris Gromov, Guillaume Walck, Ian Chen, John Hsu, Jose Luis Rivero, Markus Bader, Steven Peters, hsu
-
-2.5.1 (2015-08-16)
-------------------
-* Port of Pal Robotics range sensor plugin to Jade
-* Added a comment about the need of libgazebo5-dev in runtime
-* Added missing files
-* Added elevator plugin
-* Use c++11
-* run_depend on libgazebo5-dev (`#323 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/323>`_)
-  Declare the dependency.
-  It can be fixed later if we don't want it.
-* Contributors: Jose Luis Rivero, Nate Koenig, Steven Peters
-
-* Port of Pal Robotics range sensor plugin to Jade
-* Added a comment about the need of libgazebo5-dev in runtime
-* Added missing files
-* Added elevator plugin
-* Use c++11
-* run_depend on libgazebo5-dev
-* Contributors: Jose Luis Rivero, Nate Koenig, Steven Peters
-
-2.5.0 (2015-04-30)
-------------------
-* run_depend on libgazebo5-dev instead of gazebo5
-* Changed the rosdep key for gazebo to gazebo5, for Jade Gazebo5 will be used.
-* Contributors: Steven Peters, William Woodall
+* GAZEBO_MASTER_URI is loaded from setup.sh if empty in environment.
+* Honor GAZEBO_MASTER_URI for gzserver.
+* Honor GAZEBO_MASTER_URI for gzclient.
+* Fix string replacement to look for mesh filename surrounded by single or double quotes. Also do not replace unless there are two slashes after package
+* Merge pull request `#423 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/423>`_ from furushchev/fix-include
+  [gazebo_ros] fix include path
+* Include {PROJECT_NAME}_EXPORTED_TARGETS into dependencies for dynamic reconfiguration
+* [gazebo_ros] put header file to standard catkin include path
+* Add rostest to accompany range plugin world
+* Follow ROS documentation and depend on catkin_EXPORTED_TARGETS
+* Remove all references to gazebo_msgs_gencpp (ghost)
+* missing link_directories()
+* add option to change package:// to model:// when loading urdf file
+* Contributors: Bence Magyar, John Hsu, Jose Luis Rivero, Kei Okada, Martin Pecka, Steven Peters, Yuki Furuta
 
 2.4.10 (2016-02-25)
 -------------------
@@ -219,7 +101,7 @@ Changelog for package gazebo_ros
   There were some errors in STL iterators.
   Initialized values of member variables in constructor.
   Removed an unused variable (model_name).
-* Contributors: Carlos Aguero, John Hsu, Jose Luis Rivero, Nate Koenig, Steven Peters, hsu, osrf
+* Contributors: Carlos Agüero, John Hsu, Jose Luis Rivero, Nate Koenig, Steven Peters, hsu, osrf
 
 2.4.5 (2014-08-18)
 ------------------

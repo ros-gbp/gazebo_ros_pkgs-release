@@ -53,7 +53,7 @@ void GazeboRosCamera::Load(sensors::SensorPtr _parent, sdf::ElementPtr _sdf)
   // Make sure the ROS node for Gazebo has already been initialized
   if (!ros::isInitialized())
   {
-    ROS_FATAL_STREAM_NAMED("camera", "A ROS node for Gazebo has not been initialized, unable to load plugin. "
+    ROS_FATAL_STREAM("A ROS node for Gazebo has not been initialized, unable to load plugin. "
       << "Load the Gazebo system plugin 'libgazebo_ros_api_plugin.so' in the gazebo_ros package)");
     return;
   }
@@ -92,12 +92,6 @@ void GazeboRosCamera::OnNewFrame(const unsigned char *_image,
   {
     if ((*this->image_connect_count_) > 0)
     {
-      if (sensor_update_time < this->last_update_time_)
-      {
-          ROS_WARN_NAMED("camera", "Negative sensor update time difference detected.");
-          this->last_update_time_ = sensor_update_time;
-      }
-
       // OnNewFrame is triggered at the gazebo sensor <update_rate>
       // while there is also a plugin <updateRate> that can throttle the
       // rate down further (but then why not reduce the sensor rate?

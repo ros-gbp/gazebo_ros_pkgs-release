@@ -2,274 +2,89 @@
 Changelog for package gazebo_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-2.8.2 (2018-05-09)
-------------------
-* Fix the build on Ubuntu Artful. (`#715 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/715>`_)
-  Artful has some bugs in its cmake files for Simbody that
-  cause it to fail the build.  If we are on artful, remove
-  the problematic entries.
-  Signed-off-by: Chris Lalancette <clalancette@openrobotics.org>
-* Contributors: Chris Lalancette
-
-2.8.1 (2018-05-05)
-------------------
-* Update version to 2.8.0
-* Fix sensors after time reset (lunar-devel) (`#705 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/705>`_)
-  * camera plugin keeps publishing after negative sensor update interval
-  World resets result in a negative time differences between current world
-  time and the last recorded sensor update time, preventing the plugin
-  from publishing new frames. This commit detects such events and resets
-  the internal sensor update timestamp.
-  * block_laser, range, and joint_state_publisher keep publishing after clock reset
-  * p3d keeps publishing after clock reset
-* Support 16-bit cameras (lunar-devel) (`#700 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/700>`_)
-  * extend camera util to support 16 bit rgb image encoding
-  * support 16 bit mono
-  * add test for 16-bit camera
-  * update skip\_
-  * move camera test to camera.h, add camera16bit.cpp
-* Fix `#612 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/612>`_ for Gazebo9 (lunar-devel) (`#699 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/699>`_)
-  * Fix `#612 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/612>`_ for Gazebo9
-  This commit fixes `#612 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/612>`_, but only for Gazebo9. Fixing it for Gazebo7 (the version used in ROS Kinetic) requires the following PR to be backported to Gazebo 7 and 8:
-* gazebo_plugins: unique names for distortion tests (lunar-devel) (`#686 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/686>`_)
-  * gazebo_plugins: unique names for distortion tests
-  * Missing test files
+2.4.16 (2018-06-04)
+-------------------
+* ROS UTILS: initialize rosnode\_ in alternative constructor to avoid segfault `#478 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/478>`_ (`#722 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/722>`_)
 * Contributors: Jose Luis Rivero
 
-2.7.4 (2018-02-12)
-------------------
-* Adding velocity to joint state publisher gazebo plugin (`#671 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/671>`_)
-* Fix last gazebo8 warnings! (lunar-devel) (`#664 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/664>`_)
-* Fix gazebo8 warnings part 7: retry `#642 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/642>`_ on lunar (`#660 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/660>`_)
-* gazebo8 warnings: ifdefs for Get.*Vel() (`#655 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/655>`_)
-* Fix gazebo8 warnings part 8: ifdef's for GetWorldPose (lunar-devel) (`#652 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/652>`_)
-* for gazebo8+, call functions without Get (`#640 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/640>`_)
-* Fix conflict (`#647 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/647>`_)
-* Contributors: Jose Luis Rivero, Steven Peters
-
-2.7.3 (2017-12-11)
-------------------
-* Fix gazebo8 warnings part 4: convert remaining local variables in plugins to ign-math (lunar-devel) (`#634 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/634>`_)
-* Fix gazebo8 warnings part 3: more ign-math in plugins (lunar-devel) (`#632 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/632>`_)
-* Fix gazebo8 warnings part 2: replace private member gazebo::math types with ignition (lunar-devel) (`#630 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/630>`_)
-* Replace Events::Disconnect* with pointer reset (`#626 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/626>`_)
-* joint_state_publisher: error in case a joint is not found (`#609 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/609>`_)
-* Contributors: Jose Luis Rivero, Kenneth Blomqvist
-
-2.7.2 (2017-05-21)
-------------------
-* Revert gazebo8 changes in Lunar and back to use gazebo7 (`#583 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/583>`_)
-* Contributors: Jose Luis Rivero
-
-2.7.1 (2017-04-28)
-------------------
-* Fixes for compilation and warnings in Lunar-devel  (`#573 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/573>`_)
-  Multiple fixes for compilation and warnings coming from Gazebo8 and ignition-math3
-* Add an IMU sensor plugin that inherits from SensorPlugin (`#363 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/363>`_)
-* Less exciting console output (`#561 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/561>`_)
-* Add catkin package(s) to provide the default version of Gazebo - take II (kinetic-devel) (`#571 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/571>`_)
-* Contributors: Alessandro Settimi, Dave Coleman, Jose Luis Rivero
-
-2.5.12 (2017-04-25)
+2.4.15 (2017-08-09)
 -------------------
-* Revert catkin warning fix (`#567 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/567>`_)
-  Many regressions in third party software (see https://github.com/yujinrobot/kobuki_desktop/issues/50)
-* Contributors: Jose Luis Rivero
 
-2.5.11 (2017-04-18)
+2.4.14 (2017-06-24)
 -------------------
-* Change build system to set DEPEND on Gazebo/SDFormat (fix catkin warning)
-  Added missing DEPEND clauses to catkin_package to fix gazebo catkin warning.
-  Note that after the change problems could appear related to -lpthreads
-  errors. This is an known issue related to catkin:
-  https://github.com/ros/catkin/issues/856
+* Fix distortion coefficients order (`#503 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/503>`_)
+* Contributors: Enrique Fernández Perdomo
 
-* Fix: add gazebo_ros_range to catkin package libraries (`#558 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/558>`_)
-* Contributors: Christoph Rist, Dave Coleman
-
-2.5.10 (2017-03-03)
+2.4.13 (2017-02-28)
 -------------------
-* Revert catkin warnings to fix regressions (problems with catkin -lpthreads errors)
-  For reference and reasons, please check:
-  https://discourse.ros.org/t/need-to-sync-new-release-of-rqt-topic-indigo-jade-kinetic/1410/4
-  * Revert "Fix gazebo catkin warning, cleanup CMakeLists (`#537 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/537>`_)"
-  This reverts commit 5a0305fcb97864b66bc2e587fc0564435b4f2034.
-  * Revert "Fix gazebo and sdformat catkin warnings"
-  This reverts commit 11f95d25dcd32faccd2401d45c722f7794c7542c.
-* Fix destructor of GazeboRosVideo (`#547 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/547>`_)
-* Less exciting console output (`#549 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/549>`_)
-* Fix SDF namespacing for Video Plugin (`#546 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/546>`_)
-* Contributors: Dave Coleman, Jose Luis Rivero
+* Fix timestamp issues for rendering sensors (indigo-devel) (`#551 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/551>`_)
+* Contributors: Ian Chen, Jose Luis Rivero
 
-2.5.9 (2017-02-20)
-------------------
-* Fix gazebo catkin warning, cleanup CMakeLists (`#537 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/537>`_)
-* Fix timestamp issues for rendering sensors (kinetic-devel)
-* Namespace console output (`#543 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/543>`_)
-* Adding depth camera world to use in test to make depth camera have right timestamp `#408 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/408>`_- appears to be working (though only looking at horizon) but getting these sdf errors:
-* `#408 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/408>`_ Make the multi camera timestamps current rather than outdated, also reuse the same update code
-* Fix merge with kinetic branch
-* `#408 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/408>`_ Making a test for multicamra that shows the timestamps are currently outdated, will fix them similar to how the regular camera was fixed.
-* Fix for issue `#408 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/408>`_. The last measurement time is the time that gazebo generated the sensor data, so ought to be used. updateRate doesn't seem that useful.
-  The other cameras need similar fixes to have the proper timestamps.
-* Bugfix: duplicated tf prefix resolution
-* fill in child_frame_id of odom topic
-* Fix gazebo and sdformat catkin warnings
-* Contributors: Dave Coleman, Jose Luis Rivero, Kei Okada, Lucas Walter, Yuki Furuta
+2.4.12 (2016-11-27)
+-------------------
 
-2.5.8 (2016-12-06)
-------------------
-* Fix camera distortion coefficients order. Now {k1, k2, p1, p2, k3}
+2.4.11 (2016-07-14)
+-------------------
+* Use NOT VERSION_LESS to simplify cmake logic
 * Added an interface to gazebo's harness plugin
-* Contributors: Enrique Fernandez, Steven Peters, Nate Koenig
-
-2.5.7 (2016-06-10)
-------------------
-
-2.5.6 (2016-04-28)
-------------------
-* fix gazebo7 deprecation warnings on kinetic
-* Contributors: Steven Peters
-
-2.5.5 (2016-04-27)
-------------------
-* merge indigo, jade to kinetic-devel
-* Accept /world for the frameName parameter in gazebo_ros_p3d
-* Upgrade to gazebo 7 and remove deprecated driver_base dependency
-  * Upgrade to gazebo 7 and remove deprecated driver_base dependency
-  * disable gazebo_ros_control until dependencies are met
-  * Remove stray backslash
-* Update maintainer for Kinetic release
+* Merge pull request `#460 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/460>`_ from furushchev/fix-camera-util
+  [gazebo_plugins] bugfix: duplicated tf prefix resolution in gazebo_ros_camera plugin
+* removed extra includes
+* Fix gazebo7 deprecation warnings
+* [gazebo_plugins] bugfix: duplicated tf prefix resolution
+* Revert change. AdvertiseOption API is nothing related to latched mode
+* Fix issue of passing a member class to Advertise instead of a boolean
+* Fix gazebo_ros_joint_trajectory, whitespace
+  Duplicate of `#405 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/405>`_ targeted to indigo-devel
+* gazebo_packges/gazebo_ros_joint_pose_trajectory.cpp BUG that caused simulated trajectories to run fast
+  The points in the class.points\_ member never had their time_from_start set.
+  This caused all the time_from_starts to be set to 0. This in turn caused all
+  the trajectory points to be played instantly one after the other in Gazebo.
 * use HasElement in if condition
-* Contributors: Hugo Boyer, Jackie Kay, Jose Luis Rivero, Steven Peters, William Woodall, Yuki Furuta
-
-2.5.3 (2016-04-11)
-------------------
-
-2.5.2 (2016-02-25)
-------------------
+* Set GAZEBO_PLUGIN_PATH for test
+* Add rostest to accompany range plugin world
+* Follow ROS documentation and depend on catkin_EXPORTED_TARGETS
+* Remove all references to gazebo_msgs_gencpp (ghost)
 * Fix row_step of openni_kinect plugin
-* remove duplicated code during merge
-* merging from indigo-devel
-* Merge pull request `#368 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/368>`_ from l0g1x/jade-devel
-  Covariance for published twist in skid steer plugin
-* gazebo_ros_utils.h: include gazebo_config.h
-  Make sure to include gazebo_config.h,
-  which defines the GAZEBO_MAJOR_VERSION macro
-* Fix compiler error with SetHFOV
-  In gazebo7, the rendering::Camera::SetHFOV function
-  is overloaded with a potential for ambiguity,
-  as reported in the following issue:
-  https://bitbucket.org/osrf/gazebo/issues/1830
-  This fixes the build by explicitly defining the
-  Angle type.
-* Add missing boost header
-  Some boost headers were remove from gazebo7 header files
-  and gazebo_ros_joint_state_publisher.cpp was using it
-  implicitly.
-* Fix gazebo7 build errors
-  The SensorPtr types have changed from boost:: pointers
-  to std:: pointers,
-  which requires boost::dynamic_pointer_cast to change to
-  std::dynamic_pointer_cast.
-  A helper macro is added that adds a `using` statement
-  corresponding to the correct type of dynamic_pointer_cast.
-  This macro should be narrowly scoped to protect
-  other code.
-* gazebo_ros_utils.h: include gazebo_config.h
-  Make sure to include gazebo_config.h,
-  which defines the GAZEBO_MAJOR_VERSION macro
-* Use Joint::SetParam for joint velocity motors
-  Before gazebo5, Joint::SetVelocity and SetMaxForce
-  were used to set joint velocity motors.
-  The API has changed in gazebo5, to use Joint::SetParam
-  instead.
-  The functionality is still available through the SetParam API.
-  cherry-picked from indigo-devel
-  Add ifdefs to fix build with gazebo2
-  It was broken by `#315 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/315>`_.
-  Fixes `#321 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/321>`_.
-* Fix gazebo6 deprecation warnings
-  Several RaySensor functions are deprecated in gazebo6
-  and are removed in gazebo7.
-  The return type is changed to use ignition math
-  and the function name is changed.
-  This adds ifdef's to handle the changes.
-* Fix compiler error with SetHFOV
-  In gazebo7, the rendering::Camera::SetHFOV function
-  is overloaded with a potential for ambiguity,
-  as reported in the following issue:
-  https://bitbucket.org/osrf/gazebo/issues/1830
-  This fixes the build by explicitly defining the
-  Angle type.
-* Add missing boost header
-  Some boost headers were remove from gazebo7 header files
-  and gazebo_ros_joint_state_publisher.cpp was using it
-  implicitly.
-* Fix gazebo7 build errors
-  The SensorPtr types have changed from boost:: pointers
-  to std:: pointers,
-  which requires boost::dynamic_pointer_cast to change to
-  std::dynamic_pointer_cast.
-  A helper macro is added that adds a `using` statement
-  corresponding to the correct type of dynamic_pointer_cast.
-  This macro should be narrowly scoped to protect
-  other code.
-* Fix gazebo6 deprecation warnings
-  Several RaySensor functions are deprecated in gazebo6
-  and are removed in gazebo7.
-  The return type is changed to use ignition math
-  and the function name is changed.
-  This adds ifdef's to handle the changes.
 * Publish organized point cloud from openni_kinect plugin
-* Added covariance matrix for published twist message in the skid steer plugin, as packages such as robot_localization require an associated non-zero covariance matrix
+* missing link_directories()
+* imu supports frameName
+* Also accept "/world" as frameName parameter in gazebo_ros_p3d plugin
+* Contributors: Bence Magyar, Benjamin Blumer, Jan Skoda, Jan Škoda, Johannes Meyer, John Hsu, Jose Luis Rivero, Kentaro Wada, Steven Peters, Yuki Furuta, nate koenig
+
+2.4.10 (2016-02-25)
+-------------------
+* gazebo_ros_utils.h: include gazebo_config.h
+  Make sure to include gazebo_config.h,
+  which defines the GAZEBO_MAJOR_VERSION macro
+* Fix compiler error with SetHFOV
+  In gazebo7, the rendering::Camera::SetHFOV function
+  is overloaded with a potential for ambiguity,
+  as reported in the following issue:
+  https://bitbucket.org/osrf/gazebo/issues/1830
+  This fixes the build by explicitly defining the
+  Angle type.
+* Add missing boost header
+  Some boost headers were remove from gazebo7 header files
+  and gazebo_ros_joint_state_publisher.cpp was using it
+  implicitly.
+* Fix gazebo7 build errors
+  The SensorPtr types have changed from boost:: pointers
+  to std:: pointers,
+  which requires boost::dynamic_pointer_cast to change to
+  std::dynamic_pointer_cast.
+  A helper macro is added that adds a `using` statement
+  corresponding to the correct type of dynamic_pointer_cast.
+  This macro should be narrowly scoped to protect
+  other code.
+* Fix gazebo6 deprecation warnings
+  Several RaySensor functions are deprecated in gazebo6
+  and are removed in gazebo7.
+  The return type is changed to use ignition math
+  and the function name is changed.
+  This adds ifdef's to handle the changes.
 * Added a missing initialization inside Differential Drive
-* 2.4.9
-* Generate changelog
-* Merge pull request `#335 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/335>`_ from pal-robotics-forks/add_range_sensor_plugin
-  Adds range plugin for infrared and ultrasound sensors from PAL Robotics
-* Import changes from jade-branch
-* Add range world and launch file
-* Adds range plugin for infrared and ultrasound sensors from PAL Robotics
-* Add ifdefs to fix build with gazebo2
-  It was broken by `#315 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/315>`_.
-  Fixes `#321 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/321>`_.
-* Use Joint::SetParam for joint velocity motors
-  Before gazebo5, Joint::SetVelocity and SetMaxForce
-  were used to set joint velocity motors.
-  The API has changed in gazebo5, to use Joint::SetParam
-  instead.
-  The functionality is still available through the SetParam API.
-* Set GAZEBO_CXX_FLAGS to fix c++11 compilation errors
-* Contributors: Bence Magyar, John Hsu, Jose Luis Rivero, Kentaro Wada, Krystian, Mirko Ferrati, Steven Peters, hsu
-
-2.5.1 (2015-08-16)
-------------------
-* Port of Pal Robotics range sensor plugin to Jade
-* Added a comment about the need of libgazebo5-dev in runtime
-* Added gazebo version check
-* Added missing files
-* Added elevator plugin
-* Use c++11
-* run_depend on libgazebo5-dev (`#323 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/323>`_)
-  Declare the dependency.
-  It can be fixed later if we don't want it.
-* Contributors: Jose Luis Rivero, Nate Koenig, Steven Peters
-
-* Port of Pal Robotics range sensor plugin to Jade
-* Added a comment about the need of libgazebo5-dev in runtime
-* Added gazebo version check
-* Added missing files
-* Added elevator plugin
-* Use c++11
-* run_depend on libgazebo5-dev
-* Contributors: Jose Luis Rivero, Nate Koenig, Steven Peters
-
-2.5.0 (2015-04-30)
-------------------
-* run_depend on libgazebo5-dev instead of gazebo5
-* Changed the rosdep key for gazebo to gazebo5, for Jade Gazebo5 will be used.
-* Contributors: Steven Peters, William Woodall
+* Contributors: Mirko Ferrati, Steven Peters
 
 2.4.9 (2015-08-16)
 ------------------
@@ -290,8 +105,10 @@ Changelog for package gazebo_plugins
 
 2.4.7 (2014-12-15)
 ------------------
-* fix missing ogre flags: removed from gazebo default (5.x.x candidate) cmake config
-* Fixing handling of non-world frame velocities in setModelState.
+* Merge pull request `#276 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/276>`_ from ros-simulation/gazebo_ogre_compile_flag_fix
+  fix missing ogre flags: removed from gazebo default (5.x.x candidate) cmake config
+* Merge pull request `#238 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/238>`_ from ayrton04/indigo-devel
+  Fixing handling of non-world frame velocities in setModelState.
 * fix missing ogre flags (removed from gazebo cmake config)
 * change header to use opencv2/opencv.hpp issue `#274 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/274>`_
 * Update Gazebo/ROS tutorial URL
