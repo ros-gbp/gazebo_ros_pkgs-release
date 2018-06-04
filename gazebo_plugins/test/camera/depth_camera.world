@@ -96,7 +96,7 @@
       <sensor type="depth" name="camera1">
         <update_rate>0.5</update_rate>
         <camera name="head">
-          <!-- TODO(lucasw) is noise used? 
+          <!-- TODO(lucasw) is noise used?
           <noise>
             <type>gaussian</type>
             <mean>0.0</mean>
@@ -122,7 +122,7 @@
           <imageTopicName>image_raw</imageTopicName>
           <cameraInfoTopicName>camera_info</cameraInfoTopicName>
           <depthImageTopicName>depth/image_raw</depthImageTopicName>
-          <!-- neither camera info is getting published, frame_id is empty 
+          <!-- neither camera info is getting published, frame_id is empty
             in points and both image headers -->
           <depthImageCameraInfoTopicName>depth/camera_info</depthImageCameraInfoTopicName>
           <pointCloudTopicName>points</pointCloudTopicName>

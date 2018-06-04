@@ -46,12 +46,12 @@ namespace gazebo {
 
   class GazeboRosPlanarMove : public ModelPlugin {
 
-    public: 
+    public:
       GazeboRosPlanarMove();
       ~GazeboRosPlanarMove();
       void Load(physics::ModelPtr parent, sdf::ElementPtr sdf);
 
-    protected: 
+    protected:
       virtual void UpdateChild();
       virtual void FiniChild();
 
@@ -90,7 +90,7 @@ namespace gazebo {
       double rot_;
       bool alive_;
       common::Time last_odom_publish_time_;
-      math::Pose last_odom_pose_;
+      ignition::math::Pose3d last_odom_pose_;
 
   };
 

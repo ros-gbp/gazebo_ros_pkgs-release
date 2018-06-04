@@ -2,25 +2,68 @@
 Changelog for package gazebo_msgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-2.4.16 (2018-06-04)
+2.5.16 (2018-06-04)
 -------------------
 
-2.4.15 (2017-08-09)
+2.5.15 (2018-02-12)
 -------------------
 
-2.4.14 (2017-06-24)
+2.5.14 (2017-12-11)
 -------------------
 
-2.4.13 (2017-02-28)
+2.5.13 (2017-06-24)
+-------------------
+* Add catkin package(s) to provide the default version of Gazebo (`#571 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/571>`_)
+  * Added catkin package gazebo_dev which provides the cmake config of the installed Gazebo version
+* Contributors: Jose Luis Rivero
+
+2.5.12 (2017-04-25)
 -------------------
 
-2.4.12 (2016-11-27)
+2.5.11 (2017-04-18)
+-------------------
+* Changed the spawn model methods to spawn also lights. (`#511 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/511>`_)
+* Contributors: Alessandro Ambrosano
+
+2.5.10 (2017-03-03)
 -------------------
 
-2.4.11 (2016-07-14)
--------------------
-* [gazebo_msgs] fix wrong dependencies
-* Contributors: Yuki Furuta
+2.5.9 (2017-02-20)
+------------------
+* Removed all trailing whitespace
+* Contributors: Dave Coleman
+
+2.5.8 (2016-12-06)
+------------------
+
+2.5.7 (2016-06-10)
+------------------
+
+2.5.6 (2016-04-28)
+------------------
+
+2.5.5 (2016-04-27)
+------------------
+* merge indigo, jade to kinetic-devel
+* Update maintainer for Kinetic release
+* Contributors: Jose Luis Rivero, Steven Peters
+
+2.5.3 (2016-04-11)
+------------------
+
+2.5.2 (2016-02-25)
+------------------
+* merging from indigo-devel
+* 2.4.9
+* Generate changelog
+* GetModelState modification for jade
+* Contributors: John Hsu, Jose Luis Rivero, Markus Bader
+
+2.5.1 (2015-08-16)
+------------------
+
+2.5.0 (2015-04-30)
+------------------
 
 2.4.10 (2016-02-25)
 -------------------
