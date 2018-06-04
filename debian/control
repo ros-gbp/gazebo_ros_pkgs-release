@@ -1,0 +1,13 @@
+Source: ros-lunar-gazebo-ros
+Section: misc
+Priority: extra
+Maintainer: Jose Luis Rivero <jrivero@osrfoundation.org>
+Build-Depends: debhelper (>= 9.0.0), libtinyxml-dev, ros-lunar-catkin, ros-lunar-cmake-modules, ros-lunar-dynamic-reconfigure, ros-lunar-gazebo-dev, ros-lunar-gazebo-msgs, ros-lunar-geometry-msgs, ros-lunar-roscpp, ros-lunar-rosgraph-msgs, ros-lunar-roslib, ros-lunar-std-msgs, ros-lunar-std-srvs, ros-lunar-tf
+Homepage: http://gazebosim.org/tutorials?cat=connect_ros
+Standards-Version: 3.9.2
+
+Package: ros-lunar-gazebo-ros
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, libtinyxml-dev, ros-lunar-dynamic-reconfigure, ros-lunar-gazebo-dev, ros-lunar-gazebo-msgs, ros-lunar-geometry-msgs, ros-lunar-roscpp, ros-lunar-rosgraph-msgs, ros-lunar-roslib, ros-lunar-std-msgs, ros-lunar-std-srvs, ros-lunar-tf
+Description: Provides ROS plugins that offer message and service publishers for interfacing with Gazebo through ROS.
+ Formally simulator_gazebo/gazebo
