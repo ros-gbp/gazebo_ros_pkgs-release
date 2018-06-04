@@ -1,0 +1,12 @@
+Source: ros-melodic-gazebo-ros-control
+Section: misc
+Priority: extra
+Maintainer: Jose Luis Rivero <jrivero@osrfoundation.org>
+Build-Depends: debhelper (>= 9.0.0), ros-melodic-angles, ros-melodic-catkin, ros-melodic-control-toolbox, ros-melodic-controller-manager, ros-melodic-gazebo-dev, ros-melodic-hardware-interface, ros-melodic-joint-limits-interface, ros-melodic-pluginlib, ros-melodic-roscpp, ros-melodic-std-msgs, ros-melodic-transmission-interface, ros-melodic-urdf
+Homepage: http://ros.org/wiki/gazebo_ros_control
+Standards-Version: 3.9.2
+
+Package: ros-melodic-gazebo-ros-control
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-melodic-angles, ros-melodic-control-toolbox, ros-melodic-controller-manager, ros-melodic-gazebo-ros, ros-melodic-hardware-interface, ros-melodic-joint-limits-interface, ros-melodic-pluginlib, ros-melodic-roscpp, ros-melodic-std-msgs, ros-melodic-transmission-interface, ros-melodic-urdf
+Description: gazebo_ros_control
