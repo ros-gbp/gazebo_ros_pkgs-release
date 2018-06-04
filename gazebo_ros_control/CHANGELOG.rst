@@ -2,6 +2,26 @@
 Changelog for package gazebo_ros_control
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2.7.5 (2018-06-04)
+------------------
+* Don't ignore robotNamespace in gazebo_ros_control nodes (lunar-devel) (`#706 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/706>`_)
+  * Don't ignore robotNamespace
+  When creating the NodeHandle for reading the PID parameters, the model_nh was always ignored. Instead, all parameters were read from /gazebo_ros_control/pid_gains/<joint_name>/\* instead of /<robot_name>/gazebo_ros_control/pid_gains/<joint_name>/\*.
+  This commit restores the intended behavior, i.e., the parameters will now read from <robot_name>/..., where <robot_name> is specified via the robotNamespace plugin parameter or the parent name.
+* add physics type for dart with joint velocity interface (`#701 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/701>`_)
+* Fix for preserving world velocity when set positions for Gazebo9: `#612 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/612>`_
+  This commit fixes `#612 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/612>`_, but only for Gazebo9.
+  Fixing it for Gazebo7 (the version used in ROS Kinetic) requires the
+  following PR to be backported to Gazebo 7 and 8:
+  https://bitbucket.org/osrf/gazebo/pull-requests/2814/fix-issue-2111-by-providing-options-to/diff
+* Contributors: Jose Luis Rivero
+
+2.7.4 (2018-02-12)
+------------------
+* Fix last gazebo8 warnings! (lunar-devel) (`#664 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/664>`_)
+* Fix gazebo8 warnings part 7: retry `#642 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/642>`_ on lunar (`#660 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/660>`_)
+* Contributors: Jose Luis Rivero, Steven Peters
+
 2.7.3 (2017-12-11)
 ------------------
 * Replace Events::Disconnect* with pointer reset (`#626 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/626>`_)
