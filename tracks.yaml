@@ -147,7 +147,7 @@ tracks:
     - git-bloom-generate -y rosrpm --prefix release/:{ros_distro} :{ros_distro} -i
       :{release_inc}
     devel_branch: lunar-devel
-    last_version: 2.7.5
+    last_version: 2.7.6
     name: gazebo_ros_pkgs
     patches: null
     release_inc: '0'
