@@ -2,6 +2,9 @@
 Changelog for package gazebo_ros_control
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2.5.17 (2018-06-07)
+-------------------
+
 2.5.16 (2018-06-04)
 -------------------
 * add physics type for dart with joint velocity interface (`#693 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/693>`_)

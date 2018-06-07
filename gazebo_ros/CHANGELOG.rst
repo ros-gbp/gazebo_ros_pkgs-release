@@ -2,6 +2,9 @@
 Changelog for package gazebo_ros
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2.5.17 (2018-06-07)
+-------------------
+
 2.5.16 (2018-06-04)
 -------------------
 * Use generic SIGINT parameter in kill command for gazebo script (kinetic-devel) (`#723 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/723>`_)
