@@ -2,6 +2,9 @@
 Changelog for package gazebo_ros_control
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2.7.6 (2018-06-07)
+------------------
+
 2.7.5 (2018-06-04)
 ------------------
 * Don't ignore robotNamespace in gazebo_ros_control nodes (lunar-devel) (`#706 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/706>`_)
