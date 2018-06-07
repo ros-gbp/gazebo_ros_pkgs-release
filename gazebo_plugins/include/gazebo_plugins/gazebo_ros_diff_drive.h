@@ -125,6 +125,7 @@ namespace gazebo {
       std::string odometry_frame_;
       std::string robot_base_frame_;
       bool publish_tf_;
+      bool legacy_mode_;
       // Custom Callback Queue
       ros::CallbackQueue queue_;
       boost::thread callback_queue_thread_;
@@ -148,7 +149,6 @@ namespace gazebo {
 
     // Flags
     bool publishWheelTF_;
-    bool publishOdomTF_;
     bool publishWheelJointState_;
 
   };
@@ -156,3 +156,4 @@ namespace gazebo {
 }
 
 #endif
+

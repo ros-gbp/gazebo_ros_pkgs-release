@@ -2,31 +2,21 @@
 Changelog for package gazebo_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-2.8.3 (2018-06-04)
+2.7.6 (2018-06-07)
 ------------------
-* End of legacy for diff drive plugin (`#707 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/707>`_)
-  This PR ends with the option to set legacy in a ROS parameter.
-  In old versions of the code the right and left wheel were changed
-  to fix a former code issue. To fix an old package you have to
-  exchange left wheel by the right wheel.
-* Remove gazebo_ros_joint_trajectory plugin (`#708 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/708>`_)
-* Add publishOdomTF flag (`#692 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/692>`_) (`#727 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/727>`_)
-* DIFF DRIVE: wheel odometry twist is child frame (`#719 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/719>`_)
-* ROS UTILS: initialize rosnode\_ in alternative constructor to avoid segfault `#478 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/478>`_ (`#718 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/718>`_)
-* Contributors: Jose Luis Rivero, Kevin Allen
+* gazebo_plugins: install triggered camera plugins (`#741 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/741>`_)
+  Fixes `#739 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/739>`_.
+* Contributors: Jose Luis Rivero
 
-2.8.2 (2018-05-09)
+2.7.5 (2018-06-04)
 ------------------
-* Fix the build on Ubuntu Artful. (`#715 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/715>`_)
-  Artful has some bugs in its cmake files for Simbody that
-  cause it to fail the build.  If we are on artful, remove
-  the problematic entries.
-  Signed-off-by: Chris Lalancette <clalancette@openrobotics.org>
-* Contributors: Chris Lalancette
-
-2.8.1 (2018-05-05)
-------------------
-* Update version to 2.8.0
+* Triggered camera / multicamera plugins (lunar-devel) (`#714 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/714>`_)
+  * adds triggered cameras and multicameras
+* fix gazebo9 warnings by removing Set.*Accel calls (`#728 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/728>`_)
+  * fix gazebo9 warnings by removing Set.*Accel calls
+  * gazebo_plugins: don't use -r in tests
+* Fix model_state_test. -v means --version not --verbose (`#710 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/710>`_)
+* ROS UTILS: prevent segfault when using alternative GazeboRos constructor (lunar-devel) (`#720 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/720>`_)
 * Fix sensors after time reset (lunar-devel) (`#705 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/705>`_)
   * camera plugin keeps publishing after negative sensor update interval
   World resets result in a negative time differences between current world
@@ -41,13 +31,15 @@ Changelog for package gazebo_plugins
   * add test for 16-bit camera
   * update skip\_
   * move camera test to camera.h, add camera16bit.cpp
-* Fix `#612 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/612>`_ for Gazebo9 (lunar-devel) (`#699 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/699>`_)
-  * Fix `#612 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/612>`_ for Gazebo9
-  This commit fixes `#612 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/612>`_, but only for Gazebo9. Fixing it for Gazebo7 (the version used in ROS Kinetic) requires the following PR to be backported to Gazebo 7 and 8:
+* Fix for preserving world velocity when set positions for Gazebo9: `#612 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/612>`_
+  This commit fixes `#612 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/612>`_, but only for Gazebo9.
+  Fixing it for Gazebo7 (the version used in ROS Kinetic) requires the
+  following PR to be backported to Gazebo 7 and 8:
+  https://bitbucket.org/osrf/gazebo/pull-requests/2814/fix-issue-2111-by-providing-options-to/diff
 * gazebo_plugins: unique names for distortion tests (lunar-devel) (`#686 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/686>`_)
   * gazebo_plugins: unique names for distortion tests
   * Missing test files
-* Contributors: Jose Luis Rivero
+* Contributors: Jose Luis Rivero, Kevin Allen, Steven Peters
 
 2.7.4 (2018-02-12)
 ------------------
