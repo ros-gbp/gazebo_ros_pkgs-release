@@ -34,7 +34,8 @@ GazeboRosApiPlugin::GazeboRosApiPlugin() :
   plugin_loaded_(false),
   pub_link_states_connection_count_(0),
   pub_model_states_connection_count_(0),
-  pub_clock_frequency_(0)
+  pub_clock_frequency_(0),
+  enable_ros_network_(true)
 {
   robot_namespace_.clear();
 }
@@ -152,6 +153,8 @@ void GazeboRosApiPlugin::Load(int argc, char** argv)
   // below needs the world to be created first
   load_gazebo_ros_api_plugin_event_ = gazebo::event::Events::ConnectWorldCreated(boost::bind(&GazeboRosApiPlugin::loadGazeboRosApiPlugin,this,_1));
 
+  nh_->getParam("enable_ros_network", enable_ros_network_);
+
   plugin_loaded_ = true;
   ROS_INFO_NAMED("api_plugin", "Finished loading Gazebo ROS API Plugin.");
 }
@@ -193,7 +196,21 @@ void GazeboRosApiPlugin::loadGazeboRosApiPlugin(std::string world_name)
   pub_model_states_connection_count_ = 0;
 
   /// \brief advertise all services
-  advertiseServices();
+  if (enable_ros_network_)
+    advertiseServices();
+
+  // Manage clock for simulated ros time
+  pub_clock_ = nh_->advertise<rosgraph_msgs::Clock>("/clock",10);
+  // set param for use_sim_time if not set by user already
+  if(!(nh_->hasParam("/use_sim_time")))
+    nh_->setParam("/use_sim_time", true);
+
+  nh_->getParam("pub_clock_frequency", pub_clock_frequency_);
+#if GAZEBO_MAJOR_VERSION >= 8
+  last_pub_clock_time_ = world_->SimTime();
+#else
+  last_pub_clock_time_ = world_->GetSimTime();
+#endif
 
   // hooks for applying forces, publishing simtime on /clock
   wrench_update_event_ = gazebo::event::Events::ConnectWorldUpdateBegin(boost::bind(&GazeboRosApiPlugin::wrenchBodySchedulerSlot,this));
@@ -217,6 +234,12 @@ void GazeboRosApiPlugin::gazeboQueueThread()
 
 void GazeboRosApiPlugin::advertiseServices()
 {
+  if (! enable_ros_network_)
+  {
+    ROS_INFO_NAMED("api_plugin", "ROS gazebo topics/services are disabled");
+    return;
+  }
+
   // publish clock for simulated ros time
   pub_clock_ = nh_->advertise<rosgraph_msgs::Clock>("/clock",10);
 
@@ -1548,7 +1571,11 @@ bool GazeboRosApiPlugin::setModelState(gazebo_msgs::SetModelState::Request &req,
     world_->SetPaused(true);
     model->SetWorldPose(target_pose);
     world_->SetPaused(is_paused);
+#if GAZEBO_MAJOR_VERSION >= 8
     //ignition::math::Pose3d p3d = model->WorldPose();
+#else
+    //ignition::math::Pose3d p3d = model->GetWorldPose().Ign();
+#endif
     //ROS_ERROR_NAMED("api_plugin", "model updated state: %f %f %f",p3d.Pos().X(),p3d.Pos().Y(),p3d.Pos().Z());
 
     // set model velocity
@@ -1879,12 +1906,9 @@ bool GazeboRosApiPlugin::applyBodyWrench(gazebo_msgs::ApplyBodyWrench::Request &
     //        first, translate by reference point to the body frame
 #if GAZEBO_MAJOR_VERSION >= 8
     ignition::math::Pose3d framePose = frame->WorldPose();
-#else
-    ignition::math::Pose3d framePose = frame->GetWorldPose().Ign();
-#endif
-#if GAZEBO_MAJOR_VERSION >= 8
     ignition::math::Pose3d bodyPose = body->WorldPose();
 #else
+    ignition::math::Pose3d framePose = frame->GetWorldPose().Ign();
     ignition::math::Pose3d bodyPose = body->GetWorldPose().Ign();
 #endif
     ignition::math::Pose3d target_to_reference = framePose - bodyPose;
@@ -2286,8 +2310,8 @@ void GazeboRosApiPlugin::physicsReconfigureCallback(gazebo_ros::PhysicsConfig &c
 
 void GazeboRosApiPlugin::physicsReconfigureThread()
 {
-  physics_reconfigure_set_client_ = nh_->serviceClient<gazebo_msgs::SetPhysicsProperties>("/gazebo/set_physics_properties");
-  physics_reconfigure_get_client_ = nh_->serviceClient<gazebo_msgs::GetPhysicsProperties>("/gazebo/get_physics_properties");
+  physics_reconfigure_set_client_ = nh_->serviceClient<gazebo_msgs::SetPhysicsProperties>("set_physics_properties");
+  physics_reconfigure_get_client_ = nh_->serviceClient<gazebo_msgs::GetPhysicsProperties>("get_physics_properties");
 
   // Wait until the rest of this plugin is loaded and the services are being offered
   physics_reconfigure_set_client_.waitForExistence();
