@@ -125,6 +125,10 @@ void GazeboRosCameraUtils::Load(sensors::SensorPtr _parent,
   if (this->sdf->HasElement("imageTopicName"))
     this->image_topic_name_ = this->sdf->Get<std::string>("imageTopicName");
 
+  this->trigger_topic_name_ = "image_trigger";
+  if (this->sdf->HasElement("triggerTopicName"))
+    this->trigger_topic_name_ = this->sdf->Get<std::string>("triggerTopicName");
+
   this->camera_info_topic_name_ = "camera_info";
   if (this->sdf->HasElement("cameraInfoTopicName"))
     this->camera_info_topic_name_ =
@@ -231,6 +235,15 @@ void GazeboRosCameraUtils::Load(sensors::SensorPtr _parent,
   }
   else
     this->distortion_t2_ = this->sdf->Get<double>("distortionT2");
+
+  // TODO: make default behavior auto_distortion_ = true
+  if (!this->sdf->HasElement("autoDistortion"))
+  {
+    ROS_DEBUG_NAMED("camera_utils", "Camera plugin missing <autoDistortion>, defaults to false");
+    this->auto_distortion_ = false;
+  }
+  else
+    this->auto_distortion_ = this->sdf->Get<bool>("autoDistortion");
 
   if (!this->sdf->HasElement("borderCrop"))
   {
@@ -346,7 +359,32 @@ void GazeboRosCameraUtils::LoadThread()
   this->cameraUpdateRateSubscriber_ = this->rosnode_->subscribe(rate_so);
   */
 
+  if (this->CanTriggerCamera())
+  {
+    ros::SubscribeOptions trigger_so =
+      ros::SubscribeOptions::create<std_msgs::Empty>(
+          this->trigger_topic_name_, 1,
+          boost::bind(&GazeboRosCameraUtils::TriggerCameraInternal, this, _1),
+          ros::VoidPtr(), &this->camera_queue_);
+    this->trigger_subscriber_ = this->rosnode_->subscribe(trigger_so);
+  }
+
   this->Init();
+}
+
+void GazeboRosCameraUtils::TriggerCamera()
+{
+}
+
+bool GazeboRosCameraUtils::CanTriggerCamera()
+{
+  return false;
+}
+
+void GazeboRosCameraUtils::TriggerCameraInternal(
+    const std_msgs::Empty::ConstPtr &dummy)
+{
+  TriggerCamera();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -519,6 +557,25 @@ void GazeboRosCameraUtils::Init()
   if(this->camera_->LensDistortion())
   {
     this->camera_->LensDistortion()->SetCrop(this->border_crop_);
+  }
+
+  // Get distortion parameters from gazebo sensor if auto_distortion is true
+  if(this->auto_distortion_)
+  {
+#if GAZEBO_MAJOR_VERSION >= 8
+    this->distortion_k1_ = this->camera_->LensDistortion()->K1();
+    this->distortion_k2_ = this->camera_->LensDistortion()->K2();
+    this->distortion_k3_ = this->camera_->LensDistortion()->K3();
+    this->distortion_t1_ = this->camera_->LensDistortion()->P1();
+    this->distortion_t2_ = this->camera_->LensDistortion()->P2();
+#else
+    // TODO: remove version gaurd once gazebo7 is not supported
+    this->distortion_k1_ = this->camera_->LensDistortion()->GetK1();
+    this->distortion_k2_ = this->camera_->LensDistortion()->GetK2();
+    this->distortion_k3_ = this->camera_->LensDistortion()->GetK3();
+    this->distortion_t1_ = this->camera_->LensDistortion()->GetP1();
+    this->distortion_t2_ = this->camera_->LensDistortion()->GetP2();
+#endif
   }
 
   // D = {k1, k2, t1, t2, k3}, as specified in:
