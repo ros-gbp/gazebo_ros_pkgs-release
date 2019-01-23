@@ -217,9 +217,9 @@ bool DefaultRobotHWSim::initSim(
     {
       // Initialize the PID controller. If no PID gain values are found, use joint->SetAngle() or
       // joint->SetParam("vel") to control the joint.
-      const ros::NodeHandle nh(model_nh, "/gazebo_ros_control/pid_gains/" +
+      const ros::NodeHandle nh(robot_namespace + "/gazebo_ros_control/pid_gains/" +
                                joint_names_[j]);
-      if (pid_controllers_[j].init(nh, true))
+      if (pid_controllers_[j].init(nh))
       {
         switch (joint_control_methods_[j])
         {
@@ -358,13 +358,13 @@ void DefaultRobotHWSim::writeSim(ros::Time time, ros::Duration period)
 
       case VELOCITY:
 #if GAZEBO_MAJOR_VERSION > 2
-        if (physics_type_.compare("dart") == 0)
+        if (physics_type_.compare("ode") == 0)
         {
-          sim_joints_[j]->SetVelocity(0, e_stop_active_ ? 0 : joint_velocity_command_[j]);
+          sim_joints_[j]->SetParam("vel", 0, e_stop_active_ ? 0 : joint_velocity_command_[j]);
         }
         else 
         {
-          sim_joints_[j]->SetParam("vel", 0, e_stop_active_ ? 0 : joint_velocity_command_[j]);
+          sim_joints_[j]->SetVelocity(0, e_stop_active_ ? 0 : joint_velocity_command_[j]);
         }
 #else
         sim_joints_[j]->SetVelocity(0, e_stop_active_ ? 0 : joint_velocity_command_[j]);
