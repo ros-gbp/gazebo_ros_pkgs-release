@@ -2,6 +2,9 @@
 Changelog for package gazebo_ros_control
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2.5.19 (2019-06-04)
+-------------------
+
 2.5.18 (2019-01-23)
 -------------------
 * Add unified velocity hardware interface support for other physics engines except ODE
