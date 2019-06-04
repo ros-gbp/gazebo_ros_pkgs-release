@@ -2,6 +2,9 @@
 Changelog for package gazebo_msgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2.8.5 (2019-06-04)
+------------------
+
 2.8.4 (2018-07-06)
 ------------------
 * Correct documentation on SetModelConfiguration.srv
