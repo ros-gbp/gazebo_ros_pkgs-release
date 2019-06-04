@@ -1,0 +1,12 @@
+Source: ros-melodic-gazebo-ros-pkgs
+Section: misc
+Priority: extra
+Maintainer: Jose Luis Rivero <jrivero@osrfoundation.org>
+Build-Depends: debhelper (>= 9.0.0), ros-melodic-catkin
+Homepage: http://gazebosim.org/tutorials?cat=connect_ros
+Standards-Version: 3.9.2
+
+Package: ros-melodic-gazebo-ros-pkgs
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-melodic-gazebo-dev, ros-melodic-gazebo-msgs, ros-melodic-gazebo-plugins, ros-melodic-gazebo-ros
+Description: Interface for using ROS with the Gazebo simulator.
