@@ -22,7 +22,10 @@ import sys
 import os
 import argparse
 import xml
-from urlparse import urlsplit, SplitResult
+try: # Python 3.x
+    from urllib.parse import urlsplit, SplitResult
+except ImportError: # Python 2.x
+    from urlparse import urlsplit, SplitResult
 from gazebo_ros import gazebo_interface
 from gazebo_msgs.msg import ModelStates
 from gazebo_msgs.srv import DeleteModel
@@ -161,6 +164,10 @@ class SpawnModelNode():
 
         # Encode xml object back into string for service call
         model_xml = xml.etree.ElementTree.tostring(xml_parsed)
+
+        # For Python 3
+        if not isinstance(model_xml, str):
+            model_xml = model_xml.decode(encoding='ascii')
 
         # Form requested Pose from arguments
         initial_pose = Pose()
