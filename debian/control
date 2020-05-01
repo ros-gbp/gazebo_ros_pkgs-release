@@ -1,0 +1,12 @@
+Source: ros-melodic-gazebo-plugins
+Section: misc
+Priority: optional
+Maintainer: Jose Luis Rivero <jrivero@osrfoundation.org>
+Build-Depends: debhelper (>= 9.0.0), ros-melodic-angles, ros-melodic-camera-info-manager, ros-melodic-catkin, ros-melodic-cv-bridge, ros-melodic-diagnostic-updater, ros-melodic-dynamic-reconfigure, ros-melodic-gazebo-dev, ros-melodic-gazebo-msgs, ros-melodic-gazebo-ros, ros-melodic-geometry-msgs, ros-melodic-image-transport, ros-melodic-message-generation, ros-melodic-nav-msgs, ros-melodic-nodelet, ros-melodic-polled-camera, ros-melodic-rosconsole, ros-melodic-roscpp, ros-melodic-rosgraph-msgs, ros-melodic-rospy, ros-melodic-rostest, ros-melodic-sensor-msgs, ros-melodic-std-msgs, ros-melodic-std-srvs, ros-melodic-tf, ros-melodic-tf2-ros, ros-melodic-trajectory-msgs, ros-melodic-urdf
+Homepage: http://gazebosim.org/tutorials?cat=connect_ros
+Standards-Version: 3.9.2
+
+Package: ros-melodic-gazebo-plugins
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-melodic-angles, ros-melodic-camera-info-manager, ros-melodic-cv-bridge, ros-melodic-diagnostic-updater, ros-melodic-dynamic-reconfigure, ros-melodic-gazebo-dev, ros-melodic-gazebo-msgs, ros-melodic-gazebo-ros, ros-melodic-geometry-msgs, ros-melodic-image-transport, ros-melodic-message-runtime, ros-melodic-nav-msgs, ros-melodic-nodelet, ros-melodic-polled-camera, ros-melodic-rosconsole, ros-melodic-roscpp, ros-melodic-rosgraph-msgs, ros-melodic-rospy, ros-melodic-sensor-msgs, ros-melodic-std-msgs, ros-melodic-std-srvs, ros-melodic-tf, ros-melodic-tf2-ros, ros-melodic-trajectory-msgs, ros-melodic-urdf
+Description: Robot-independent Gazebo plugins for sensors, motors and dynamic reconfigurable components.
