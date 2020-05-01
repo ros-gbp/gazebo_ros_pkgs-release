@@ -76,6 +76,7 @@ generate_dynamic_reconfigure_options(
   cfg/GazeboRosCamera.cfg
   cfg/GazeboRosOpenniKinect.cfg
   cfg/Hokuyo.cfg
+  cfg/WheelSlip.cfg
 )
 
 include_directories(include
@@ -233,6 +234,13 @@ if (NOT GAZEBO_VERSION VERSION_LESS 7.3)
     ${Boost_LIBRARIES} HarnessPlugin ${catkin_LIBRARIES})
 endif()
 
+if (NOT GAZEBO_VERSION VERSION_LESS 9.5)
+  add_library(gazebo_ros_wheel_slip src/gazebo_ros_wheel_slip.cpp)
+  add_dependencies(gazebo_ros_wheel_slip ${catkin_EXPORTED_TARGETS} ${PROJECT_NAME}_gencfg)
+  target_link_libraries(gazebo_ros_wheel_slip
+    ${Boost_LIBRARIES} WheelSlipPlugin ${catkin_LIBRARIES})
+endif()
+
 add_library(gazebo_ros_laser src/gazebo_ros_laser.cpp)
 target_link_libraries(gazebo_ros_laser RayPlugin ${catkin_LIBRARIES})
 
@@ -314,8 +322,13 @@ target_link_libraries(gazebo_ros_template ${catkin_LIBRARIES} ${Boost_LIBRARIES}
 
 install(TARGETS
   hokuyo_node
-  vision_reconfigure
   camera_synchronizer
+  pub_joint_trajectory_test
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+  )
+
+install(TARGETS
+  vision_reconfigure
   gazebo_ros_utils
   gazebo_ros_camera_utils
   gazebo_ros_camera
@@ -346,22 +359,31 @@ install(TARGETS
   gazebo_ros_video
   gazebo_ros_planar_move
   gazebo_ros_vacuum_gripper
-  pub_joint_trajectory_test
   gazebo_ros_gpu_laser
   gazebo_ros_range
-  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
   )
 
 if (NOT GAZEBO_VERSION VERSION_LESS 6.0)
   install(TARGETS gazebo_ros_elevator
-    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+    ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
     LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+    RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
     )
 endif()
 
 if (NOT GAZEBO_VERSION VERSION_LESS 7.3)
   install(TARGETS gazebo_ros_harness
+    ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+    LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+    RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
+    )
+endif()
+
+if (NOT GAZEBO_VERSION VERSION_LESS 9.5)
+  install(TARGETS gazebo_ros_wheel_slip
     DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
     LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
     )
