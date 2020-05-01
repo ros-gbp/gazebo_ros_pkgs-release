@@ -1,17 +1,13 @@
-# gazebo_ros_pkgs
+# Gazebo ros_control Interfaces
 
-[![Build Status](http://build.ros.org/buildStatus/icon?job=Kpr__gazebo_ros_pkgs__ubuntu_xenial_amd64)](http://build.ros.org/job/Kpr__gazebo_ros_pkgs__ubuntu_xenial_amd64)
+This is a ROS package for integrating the `ros_control` controller architecture
+with the [Gazebo](http://gazebosim.org/) simulator.
 
-Wrappers, tools and additional API's for using ROS with the Gazebo simulator. Formally simulator_gazebo stack, gazebo_pkgs is a meta package. Now Catkinized and works with the standalone Gazebo debian.
+This package provides a Gazebo plugin which instantiates a ros_control
+controller manager and connects it to a Gazebo model.
 
-### Installation
-[Installing gazebo_ros_pkgs](http://gazebosim.org/tutorials?tut=ros_installing&cat=connect_ros)
+[Documentation](http://gazebosim.org/tutorials?tut=ros_control) is provided on Gazebo's website.
 
-### Documentation and Tutorials
- * [Supported sensors](https://github.com/ros-simulation/gazebo_ros_pkgs/blob/melodic-devel/docs/SENSORS.md) in this repository
- * [On gazebosim.org](http://gazebosim.org/tutorials?cat=connect_ros)
+## Future Direction
 
-### Develop and Contribute
-
- * [Contribute](https://github.com/ros-simulation/gazebo_ros_pkgs/blob/melodic-devel/docs/CONTRIBUTING.md) page
- * [How to release gazebo_ros_pkgs for unofficial gazebo versions](https://github.com/ros-simulation/gazebo_ros_pkgs/blob/melodic-devel/docs/RELEASE.md)
+ - Implement transmissions
