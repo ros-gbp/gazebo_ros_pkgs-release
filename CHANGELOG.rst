@@ -2,6 +2,12 @@
 Changelog for package gazebo_ros
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2.8.7 (2020-05-01)
+------------------
+* add node required to empty world (`#1078 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/1078>`_)
+  Signed-off-by: Mabel Zhang <mabel@openrobotics.org>
+* Contributors: Mabel Zhang
+
 2.8.6 (2019-12-26)
 ------------------
 * ROS API: remove unhelpful error in GetWorldProperties call (`#747 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/747>`_)
