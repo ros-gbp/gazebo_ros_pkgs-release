@@ -15,26 +15,27 @@
  *
 */
 
-/*
- * Desc: 3D position interface for ground truth.
- * Author: Sachin Chitta and John Hsu
- * Date: 1 June 2008
- */
+
+// *************************************************************
+// DEPRECATED
+// This class has been renamed to gazebo_ros_joint_pose_trajectory
+// *************************************************************
 
 #include <string>
 #include <stdlib.h>
 #include <tf/tf.h>
 
-#include <gazebo_plugins/gazebo_ros_joint_pose_trajectory.h>
+#include "gazebo_plugins/gazebo_ros_joint_trajectory.h"
 
 namespace gazebo
 {
-GZ_REGISTER_MODEL_PLUGIN(GazeboRosJointPoseTrajectory);
+GZ_REGISTER_MODEL_PLUGIN(GazeboRosJointTrajectory);
 
 ////////////////////////////////////////////////////////////////////////////////
 // Constructor
-ROS_DEPRECATED GazeboRosJointPoseTrajectory::GazeboRosJointPoseTrajectory()  // replaced with GazeboROSJointPoseTrajectory
+ROS_DEPRECATED GazeboRosJointTrajectory::GazeboRosJointTrajectory()  // replaced with GazeboROSJointPoseTrajectory
 {
+  ROS_WARN_NAMED("gazebo_ros_joint_trajectory","DEPRECATED: gazebo_ros_joint_trajectory has been renamed to gazebo_ros_joint_pose_trajectory");
 
   this->has_trajectory_ = false;
   this->trajectory_index = 0;
@@ -45,7 +46,7 @@ ROS_DEPRECATED GazeboRosJointPoseTrajectory::GazeboRosJointPoseTrajectory()  // 
 
 ////////////////////////////////////////////////////////////////////////////////
 // Destructor
-GazeboRosJointPoseTrajectory::~GazeboRosJointPoseTrajectory()
+GazeboRosJointTrajectory::~GazeboRosJointTrajectory()
 {
   this->update_connection_.reset();
   // Finalize the controller
@@ -58,7 +59,7 @@ GazeboRosJointPoseTrajectory::~GazeboRosJointPoseTrajectory()
 
 ////////////////////////////////////////////////////////////////////////////////
 // Load the controller
-void GazeboRosJointPoseTrajectory::Load(physics::ModelPtr _model,
+void GazeboRosJointTrajectory::Load(physics::ModelPtr _model,
   sdf::ElementPtr _sdf)
 {
   // save pointers
@@ -91,29 +92,30 @@ void GazeboRosJointPoseTrajectory::Load(physics::ModelPtr _model,
 
   if (!this->sdf->HasElement("updateRate"))
   {
-    ROS_INFO_NAMED("joint_pose_trajectory", "joint trajectory plugin missing <updateRate>, defaults"
+    ROS_INFO_NAMED("joint_trajectory", "joint trajectory plugin missing <updateRate>, defaults"
              " to 0.0 (as fast as possible)");
     this->update_rate_ = 0;
   }
   else
     this->update_rate_ = this->sdf->Get<double>("updateRate");
 
-  // Make sure the ROS node for Gazebo has already been initialized
-  if (!ros::isInitialized())
+  // ros callback queue for processing subscription
+  if (ros::isInitialized())
   {
-    ROS_FATAL_STREAM_NAMED("joint_pose_trajectory", "A ROS node for Gazebo has not been initialized, unable to load plugin. "
-      << "Load the Gazebo system plugin 'libgazebo_ros_api_plugin.so' in the gazebo_ros package)");
-    return;
+    this->deferred_load_thread_ = boost::thread(
+      boost::bind(&GazeboRosJointTrajectory::LoadThread, this));
   }
-
-  this->deferred_load_thread_ = boost::thread(
-    boost::bind(&GazeboRosJointPoseTrajectory::LoadThread, this));
-
+  else
+  {
+    gzerr << "Not loading plugin since ROS hasn't been "
+          << "properly initialized.  Try starting gazebo with ros plugin:\n"
+          << "  gazebo -s libgazebo_ros_api_plugin.so\n";
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // Load the controller
-void GazeboRosJointPoseTrajectory::LoadThread()
+void GazeboRosJointTrajectory::LoadThread()
 {
   this->rosnode_ = new ros::NodeHandle(this->robot_namespace_);
 
@@ -126,7 +128,7 @@ void GazeboRosJointPoseTrajectory::LoadThread()
     ros::SubscribeOptions trajectory_so =
       ros::SubscribeOptions::create<trajectory_msgs::JointTrajectory>(
       this->topic_name_, 100, boost::bind(
-      &GazeboRosJointPoseTrajectory::SetTrajectory, this, _1),
+      &GazeboRosJointTrajectory::SetTrajectory, this, _1),
       ros::VoidPtr(), &this->queue_);
     this->sub_ = this->rosnode_->subscribe(trajectory_so);
   }
@@ -137,7 +139,7 @@ void GazeboRosJointPoseTrajectory::LoadThread()
     ros::AdvertiseServiceOptions srv_aso =
       ros::AdvertiseServiceOptions::create<gazebo_msgs::SetJointTrajectory>(
       this->service_name_,
-      boost::bind(&GazeboRosJointPoseTrajectory::SetTrajectory, this, _1, _2),
+      boost::bind(&GazeboRosJointTrajectory::SetTrajectory, this, _1, _2),
       ros::VoidPtr(), &this->queue_);
     this->srv_ = this->rosnode_->advertiseService(srv_aso);
   }
@@ -151,18 +153,18 @@ void GazeboRosJointPoseTrajectory::LoadThread()
 
   // start custom queue for joint trajectory plugin ros topics
   this->callback_queue_thread_ =
-    boost::thread(boost::bind(&GazeboRosJointPoseTrajectory::QueueThread, this));
+    boost::thread(boost::bind(&GazeboRosJointTrajectory::QueueThread, this));
 
   // New Mechanism for Updating every World Cycle
   // Listen to the update event. This event is broadcast every
   // simulation iteration.
   this->update_connection_ = event::Events::ConnectWorldUpdateBegin(
-      boost::bind(&GazeboRosJointPoseTrajectory::UpdateStates, this));
+      boost::bind(&GazeboRosJointTrajectory::UpdateStates, this));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // set joint trajectory
-void GazeboRosJointPoseTrajectory::SetTrajectory(
+void GazeboRosJointTrajectory::SetTrajectory(
   const trajectory_msgs::JointTrajectory::ConstPtr& trajectory)
 {
   boost::mutex::scoped_lock lock(this->update_mutex);
@@ -184,14 +186,14 @@ void GazeboRosJointPoseTrajectory::SetTrajectory(
       this->reference_link_ = boost::dynamic_pointer_cast<physics::Link>(ent);
     if (!this->reference_link_)
     {
-      ROS_ERROR_NAMED("joint_pose_trajectory", "ros_joint_trajectory plugin needs a reference link [%s] as"
+      ROS_ERROR_NAMED("joint_trajectory", "ros_joint_trajectory plugin needs a reference link [%s] as"
                 " frame_id, aborting.\n", this->reference_link_name_.c_str());
       return;
     }
     else
     {
       this->model_ = this->reference_link_->GetParentModel();
-      ROS_DEBUG_NAMED("joint_pose_trajectory", "test: update model pose by keeping link [%s] stationary"
+      ROS_DEBUG_NAMED("joint_trajectory", "test: update model pose by keeping link [%s] stationary"
                 " inertially", this->reference_link_->GetName().c_str());
     }
   }
@@ -245,7 +247,7 @@ void GazeboRosJointPoseTrajectory::SetTrajectory(
 }
 
 #ifdef ENABLE_SERVICE
-bool GazeboRosJointPoseTrajectory::SetTrajectory(
+bool GazeboRosJointTrajectory::SetTrajectory(
   const gazebo_msgs::SetJointTrajectory::Request& req,
   const gazebo_msgs::SetJointTrajectory::Response& res)
 {
@@ -268,18 +270,18 @@ bool GazeboRosJointPoseTrajectory::SetTrajectory(
       this->world_->GetEntity(this->reference_link_name_);
 #endif
     if (ent)
-      this->reference_link_ = boost::dynamic_pointer_cast<physics::Link>(ent);
+      this->reference_link_ = boost::shared_dynamic_cast<physics::Link>(ent);
     if (!this->reference_link_)
     {
-      ROS_ERROR_NAMED("joint_pose_trajectory", "ros_joint_trajectory plugin specified a reference link [%s]"
+      ROS_ERROR_NAMED("joint_trajectory", "ros_joint_trajectory plugin specified a reference link [%s]"
                 " that does not exist, aborting.\n",
                 this->reference_link_name_.c_str());
-      ROS_DEBUG_NAMED("joint_pose_trajectory", "will set model [%s] configuration, keeping model root link"
+      ROS_DEBUG_NAMED("joint_trajectory", "will set model [%s] configuration, keeping model root link"
                 " stationary.", this->model_->GetName().c_str());
       return false;
     }
     else
-      ROS_DEBUG_NAMED("joint_pose_trajectory", "test: update model pose by keeping link [%s] stationary"
+      ROS_DEBUG_NAMED("joint_trajectory", "test: update model pose by keeping link [%s] stationary"
                 " inertially", this->reference_link_->GetName().c_str());
   }
 
@@ -293,13 +295,13 @@ bool GazeboRosJointPoseTrajectory::SetTrajectory(
     this->model_ = this->reference_link_->GetParentModel();
     if (this->model_)
     {
-      ROS_INFO_NAMED("joint_pose_trajectory", "found model[%s] by link name specified in frame_id[%s]",
+      ROS_INFO_NAMED("joint_trajectory", "found model[%s] by link name specified in frame_id[%s]",
         this->model_->GetName().c_str(),
         req.joint_trajectory.header.frame_id.c_str());
     }
     else
     {
-      ROS_WARN_NAMED("joint_pose_trajectory", "no model found by link name specified in frame_id[%s],"
+      ROS_WARN_NAMED("joint_trajectory", "no model found by link name specified in frame_id[%s],"
                "  aborting.", req.joint_trajectory.header.frame_id.c_str());
       return false;
     }
@@ -335,7 +337,7 @@ bool GazeboRosJointPoseTrajectory::SetTrajectory(
 
 ////////////////////////////////////////////////////////////////////////////////
 // Play the trajectory, update states
-void GazeboRosJointPoseTrajectory::UpdateStates()
+void GazeboRosJointTrajectory::UpdateStates()
 {
   boost::mutex::scoped_lock lock(this->update_mutex);
   if (this->has_trajectory_)
@@ -355,7 +357,7 @@ void GazeboRosJointPoseTrajectory::UpdateStates()
       // gzerr << trajectory_index << " : "  << this->points_.size() << "\n";
       if (this->trajectory_index < this->points_.size())
       {
-        ROS_INFO_NAMED("joint_pose_trajectory", "time [%f] updating configuration [%d/%lu]",
+        ROS_INFO_NAMED("joint_trajectory", "time [%f] updating configuration [%d/%lu]",
           cur_time.Double(), this->trajectory_index, this->points_.size());
 
         // get reference link pose before updates
@@ -388,7 +390,7 @@ void GazeboRosJointPoseTrajectory::UpdateStates()
               this->joints_[i]->SetPosition(0,
                 this->points_[this->trajectory_index].positions[i], true);
 #else
-              ROS_WARN_ONCE("The joint_pose_trajectory plugin is using the Joint::SetPosition method without preserving the link velocity.");
+              ROS_WARN_ONCE("The joint_trajectory plugin is using the Joint::SetPosition method without preserving the link velocity.");
               ROS_WARN_ONCE("As a result, gravity will not be simulated correctly for your model.");
               ROS_WARN_ONCE("Please upgrade to Gazebo 9.");
               ROS_WARN_ONCE("For details, see https://github.com/ros-simulation/gazebo_ros_pkgs/issues/612");
@@ -407,7 +409,7 @@ void GazeboRosJointPoseTrajectory::UpdateStates()
         }
         else
         {
-          ROS_ERROR_NAMED("joint_pose_trajectory", "point[%u] in JointTrajectory has different number of"
+          ROS_ERROR_NAMED("joint_trajectory", "point[%u] in JointTrajectory has different number of"
                     " joint names[%u] and positions[%lu].",
                     this->trajectory_index, chain_size,
                     this->points_[this->trajectory_index].positions.size());
@@ -445,7 +447,7 @@ void GazeboRosJointPoseTrajectory::UpdateStates()
 
 ////////////////////////////////////////////////////////////////////////////////
 // Put laser data to the interface
-void GazeboRosJointPoseTrajectory::QueueThread()
+void GazeboRosJointTrajectory::QueueThread()
 {
   static const double timeout = 0.01;
   while (this->rosnode_->ok())

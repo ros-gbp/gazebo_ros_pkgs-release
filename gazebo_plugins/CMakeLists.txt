@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5.1)
+cmake_minimum_required(VERSION 2.8.3)
 project(gazebo_plugins)
 
 option(ENABLE_DISPLAY_TESTS "Enable the building of tests that requires a display" OFF)
@@ -30,27 +30,6 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
 )
 
-# Through transitive dependencies in the packages above, gazebo_plugins depends
-# on Simbody.  There is a bug in the Ubuntu Artful (17.10) version of the
-# Simbody package where it includes /usr/lib/libblas.so and
-# /usr/lib/liblapack.so in the CMake list of libraries even though neither of
-# those two paths exist (they both really live in /usr/lib/<arch>-linux-gnu).
-# We remove these two during build-time on artful below; this works because
-# they both will get resolved to the proper paths during runtime linking.
-find_program(LSB_RELEASE_EXEC lsb_release)
-if(NOT LSB_RELEASE_EXEC STREQUAL "LSB_RELEASE_EXEC-NOTFOUND")
-  execute_process(COMMAND ${LSB_RELEASE_EXEC} -cs
-    OUTPUT_VARIABLE OS_CODENAME
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-  )
-  if(OS_CODENAME STREQUAL "artful")
-    list(FILTER catkin_LIBRARIES EXCLUDE REGEX "/usr/lib/libblas.so")
-    list(FILTER catkin_LIBRARIES EXCLUDE REGEX "/usr/lib/liblapack.so")
-    list(FILTER GAZEBO_LIBRARIES EXCLUDE REGEX "/usr/lib/libblas.so")
-    list(FILTER GAZEBO_LIBRARIES EXCLUDE REGEX "/usr/lib/liblapack.so")
-  endif()
-endif()
-
 include (FindPkgConfig)
 if (PKG_CONFIG_FOUND)
   pkg_check_modules(XML libxml-2.0)
@@ -76,7 +55,6 @@ generate_dynamic_reconfigure_options(
   cfg/GazeboRosCamera.cfg
   cfg/GazeboRosOpenniKinect.cfg
   cfg/Hokuyo.cfg
-  cfg/WheelSlip.cfg
 )
 
 include_directories(include
@@ -127,6 +105,7 @@ catkin_package(
   gazebo_ros_projector
   gazebo_ros_prosilica
   gazebo_ros_force
+  gazebo_ros_joint_trajectory
   gazebo_ros_joint_state_publisher
   gazebo_ros_joint_pose_trajectory
   gazebo_ros_diff_drive
@@ -234,13 +213,6 @@ if (NOT GAZEBO_VERSION VERSION_LESS 7.3)
     ${Boost_LIBRARIES} HarnessPlugin ${catkin_LIBRARIES})
 endif()
 
-if (NOT GAZEBO_VERSION VERSION_LESS 9.5)
-  add_library(gazebo_ros_wheel_slip src/gazebo_ros_wheel_slip.cpp)
-  add_dependencies(gazebo_ros_wheel_slip ${catkin_EXPORTED_TARGETS} ${PROJECT_NAME}_gencfg)
-  target_link_libraries(gazebo_ros_wheel_slip
-    ${Boost_LIBRARIES} WheelSlipPlugin ${catkin_LIBRARIES})
-endif()
-
 add_library(gazebo_ros_laser src/gazebo_ros_laser.cpp)
 target_link_libraries(gazebo_ros_laser RayPlugin ${catkin_LIBRARIES})
 
@@ -272,6 +244,11 @@ target_link_libraries(gazebo_ros_prosilica gazebo_ros_camera_utils CameraPlugin 
 
 add_library(gazebo_ros_force src/gazebo_ros_force.cpp)
 target_link_libraries(gazebo_ros_force ${catkin_LIBRARIES} ${Boost_LIBRARIES})
+
+add_library(gazebo_ros_joint_trajectory src/gazebo_ros_joint_trajectory.cpp)
+add_dependencies(gazebo_ros_joint_trajectory ${catkin_EXPORTED_TARGETS})
+target_link_libraries(gazebo_ros_joint_trajectory ${catkin_LIBRARIES} ${Boost_LIBRARIES})
+
 
 add_library(gazebo_ros_joint_state_publisher src/gazebo_ros_joint_state_publisher.cpp)
 set_target_properties(gazebo_ros_joint_state_publisher PROPERTIES LINK_FLAGS "${ld_flags}")
@@ -322,13 +299,8 @@ target_link_libraries(gazebo_ros_template ${catkin_LIBRARIES} ${Boost_LIBRARIES}
 
 install(TARGETS
   hokuyo_node
-  camera_synchronizer
-  pub_joint_trajectory_test
-  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-  )
-
-install(TARGETS
   vision_reconfigure
+  camera_synchronizer
   gazebo_ros_utils
   gazebo_ros_camera_utils
   gazebo_ros_camera
@@ -351,6 +323,7 @@ install(TARGETS
   gazebo_ros_projector
   gazebo_ros_prosilica
   gazebo_ros_force
+  gazebo_ros_joint_trajectory
   gazebo_ros_joint_state_publisher
   gazebo_ros_joint_pose_trajectory
   gazebo_ros_diff_drive
@@ -359,31 +332,22 @@ install(TARGETS
   gazebo_ros_video
   gazebo_ros_planar_move
   gazebo_ros_vacuum_gripper
+  pub_joint_trajectory_test
   gazebo_ros_gpu_laser
   gazebo_ros_range
-  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
   )
 
 if (NOT GAZEBO_VERSION VERSION_LESS 6.0)
   install(TARGETS gazebo_ros_elevator
-    ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
     LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-    RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
     )
 endif()
 
 if (NOT GAZEBO_VERSION VERSION_LESS 7.3)
   install(TARGETS gazebo_ros_harness
-    ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-    LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-    RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
-    )
-endif()
-
-if (NOT GAZEBO_VERSION VERSION_LESS 9.5)
-  install(TARGETS gazebo_ros_wheel_slip
     DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
     LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
     )

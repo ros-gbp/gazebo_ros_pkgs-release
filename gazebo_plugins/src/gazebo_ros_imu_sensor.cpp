@@ -18,7 +18,6 @@
 #include <iostream>
 #include <gazebo/sensors/ImuSensor.hh>
 #include <gazebo/physics/World.hh>
-#include <ignition/math/Rand.hh>
 
 GZ_REGISTER_SENSOR_PLUGIN(gazebo::GazeboRosImuSensor)
 
@@ -27,6 +26,7 @@ gazebo::GazeboRosImuSensor::GazeboRosImuSensor(): SensorPlugin()
   accelerometer_data = ignition::math::Vector3d(0, 0, 0);
   gyroscope_data = ignition::math::Vector3d(0, 0, 0);
   orientation = ignition::math::Quaterniond(1,0,0,0);
+  seed=0;
   sensor=NULL;
 }
 
@@ -39,16 +39,6 @@ void gazebo::GazeboRosImuSensor::Load(gazebo::sensors::SensorPtr sensor_, sdf::E
   {
     ROS_FATAL("Error: Sensor pointer is NULL!");
     return;
-  }
-
-  if (sdf->HasElement("initialOrientationAsReference"))
-  {
-    bool initial_orientation_as_reference = sdf->Get<bool>("initialOrientationAsReference");
-    ROS_INFO_STREAM("<initialOrientationAsReference> set to: "<< initial_orientation_as_reference);
-    if (!initial_orientation_as_reference) {
-      // This complies with REP 145
-      sensor->SetWorldToReferenceOrientation(ignition::math::Quaterniond::Identity);
-    }
   }
 
   sensor->SetActive(true);
@@ -130,8 +120,8 @@ void gazebo::GazeboRosImuSensor::UpdateChild(const gazebo::common::UpdateInfo &/
 double gazebo::GazeboRosImuSensor::GuassianKernel(double mu, double sigma)
 {
   // generation of two normalized uniform random variables
-  double U1 = ignition::math::Rand::DblUniform();
-  double U2 = ignition::math::Rand::DblUniform();
+  double U1 = static_cast<double>(rand_r(&seed)) / static_cast<double>(RAND_MAX);
+  double U2 = static_cast<double>(rand_r(&seed)) / static_cast<double>(RAND_MAX);
 
   // using Box-Muller transform to obtain a varaible with a standard normal distribution
   double Z0 = sqrt(-2.0 * ::log(U1)) * cos(2.0*M_PI * U2);

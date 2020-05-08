@@ -229,6 +229,12 @@ details about which code should be submitted to this repository.
 
 ## List of deprecated plugins (to be removed)
 
+ * ***gazebo_ros_joint_trajectory***
+    - ***description:*** migrate to gazebo_ros_joint_pose_trajectory
+    - ***status:*** deprecated. To be removed in Lunar.
+    - ***gazebo plugin:*** --
+    - ***example:*** --
+
  * ***camera_synchronizer***
  * ***vision_reconfigure***
    - ***description:***

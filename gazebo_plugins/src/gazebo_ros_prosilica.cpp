@@ -55,8 +55,6 @@
 #include <boost/thread.hpp>
 #include <boost/thread/recursive_mutex.hpp>
 #include <string>
-#include <chrono>
-#include <thread>
 
 namespace gazebo
 {
@@ -322,7 +320,7 @@ void GazeboRosProsilica::pollCallback(polled_camera::GetPolledImage::Request& re
         }
       }
     }
-    std::this_thread::sleep_for(std::chrono::microseconds(100000));
+    usleep(100000);
   }
   (*this->image_connect_count_)--;
   rsp.success = true;
