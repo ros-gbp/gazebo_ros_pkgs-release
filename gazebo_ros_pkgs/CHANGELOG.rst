@@ -2,33 +2,40 @@
 Changelog for package gazebo_ros_pkgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-2.5.20 (2020-05-08)
--------------------
+2.9.0 (2020-05-19)
+------------------
+* Bump CMake version to avoid CMP0048 warning (`#1066 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/1066>`_)
+* Contributors: Alejandro Hernández Cordero
 
-2.5.19 (2019-06-04)
--------------------
-* Remove extra angle bracket (`#893 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/893>`_)
+2.8.5 (2019-06-04)
+------------------
+* Remove extra angle bracket (`#895 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/895>`_)
 * Contributors: David V. Lu!!
 
-2.5.18 (2019-01-23)
--------------------
+2.8.4 (2018-07-06)
+------------------
 
-2.5.17 (2018-06-07)
--------------------
+2.8.3 (2018-06-04)
+------------------
 
-2.5.16 (2018-06-04)
--------------------
+2.8.2 (2018-05-09)
+------------------
 
-2.5.15 (2018-02-12)
--------------------
+2.8.1 (2018-05-05)
+------------------
 
-2.5.14 (2017-12-11)
--------------------
+2.7.4 (2018-02-12)
+------------------
 
-2.5.13 (2017-06-24)
--------------------
-* Add catkin package(s) to provide the default version of Gazebo (`#571 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/571>`_)
-  * Added catkin package gazebo_dev which provides the cmake config of the installed Gazebo version
+2.7.3 (2017-12-11)
+------------------
+
+2.7.2 (2017-05-21)
+------------------
+
+2.7.1 (2017-04-28)
+------------------
+* Add catkin package(s) to provide the default version of Gazebo (kinetic-devel) (`#571 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/571>`_)
 * Contributors: Jose Luis Rivero
 
 2.5.12 (2017-04-25)

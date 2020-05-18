@@ -44,10 +44,7 @@
 #include <diagnostic_updater/diagnostic_updater.h>
 #include <sensor_msgs/RegionOfInterest.h>
 
-#include <opencv/cv.h>
-#include <opencv/highgui.h>
-
-#include <opencv/cvwimage.h>
+#include <opencv2/highgui.hpp>
 
 #include <boost/scoped_ptr.hpp>
 #include <boost/bind.hpp>
@@ -55,6 +52,8 @@
 #include <boost/thread.hpp>
 #include <boost/thread/recursive_mutex.hpp>
 #include <string>
+#include <chrono>
+#include <thread>
 
 namespace gazebo
 {
@@ -320,7 +319,7 @@ void GazeboRosProsilica::pollCallback(polled_camera::GetPolledImage::Request& re
         }
       }
     }
-    usleep(100000);
+    std::this_thread::sleep_for(std::chrono::microseconds(100000));
   }
   (*this->image_connect_count_)--;
   rsp.success = true;
