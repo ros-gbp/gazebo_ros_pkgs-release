@@ -1,0 +1,12 @@
+Source: ros-noetic-gazebo-ros-control
+Section: misc
+Priority: optional
+Maintainer: Jose Luis Rivero <jrivero@osrfoundation.org>
+Build-Depends: debhelper (>= 9.0.0), ros-noetic-angles, ros-noetic-catkin, ros-noetic-control-toolbox, ros-noetic-controller-manager, ros-noetic-gazebo-dev, ros-noetic-hardware-interface, ros-noetic-joint-limits-interface, ros-noetic-pluginlib, ros-noetic-roscpp, ros-noetic-std-msgs, ros-noetic-transmission-interface, ros-noetic-urdf
+Homepage: http://ros.org/wiki/gazebo_ros_control
+Standards-Version: 3.9.2
+
+Package: ros-noetic-gazebo-ros-control
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-noetic-angles, ros-noetic-control-toolbox, ros-noetic-controller-manager, ros-noetic-gazebo-ros, ros-noetic-hardware-interface, ros-noetic-joint-limits-interface, ros-noetic-pluginlib, ros-noetic-roscpp, ros-noetic-std-msgs, ros-noetic-transmission-interface, ros-noetic-urdf
+Description: gazebo_ros_control
