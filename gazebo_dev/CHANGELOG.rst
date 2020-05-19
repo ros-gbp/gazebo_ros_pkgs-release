@@ -2,6 +2,9 @@
 Changelog for package gazebo_dev
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2.9.1 (2020-05-20)
+------------------
+
 2.9.0 (2020-05-19)
 ------------------
 * Gazebo 11 for Noetic (`#1094 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/1094>`_)
