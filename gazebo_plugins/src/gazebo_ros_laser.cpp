@@ -39,7 +39,6 @@
 #include <tf/transform_listener.h>
 
 #include <gazebo_plugins/gazebo_ros_laser.h>
-#include <ignition/math/Rand.hh>
 
 namespace gazebo
 {
@@ -50,6 +49,7 @@ GZ_REGISTER_SENSOR_PLUGIN(GazeboRosLaser)
 // Constructor
 GazeboRosLaser::GazeboRosLaser()
 {
+  this->seed = 0;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

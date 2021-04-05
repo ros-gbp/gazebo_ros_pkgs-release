@@ -219,7 +219,7 @@ bool DefaultRobotHWSim::initSim(
       // joint->SetParam("vel") to control the joint.
       const ros::NodeHandle nh(robot_namespace + "/gazebo_ros_control/pid_gains/" +
                                joint_names_[j]);
-      if (pid_controllers_[j].init(nh))
+      if (pid_controllers_[j].init(nh, true))
       {
         switch (joint_control_methods_[j])
         {
@@ -321,6 +321,10 @@ void DefaultRobotHWSim::writeSim(ros::Time time, ros::Duration period)
 #if GAZEBO_MAJOR_VERSION >= 9
         sim_joints_[j]->SetPosition(0, joint_position_command_[j], true);
 #else
+        ROS_WARN_ONCE("The default_robot_hw_sim plugin is using the Joint::SetPosition method without preserving the link velocity.");
+        ROS_WARN_ONCE("As a result, gravity will not be simulated correctly for your model.");
+        ROS_WARN_ONCE("Please set gazebo_pid parameters, switch to the VelocityJointInterface or EffortJointInterface, or upgrade to Gazebo 9.");
+        ROS_WARN_ONCE("For details, see https://github.com/ros-simulation/gazebo_ros_pkgs/issues/612");
         sim_joints_[j]->SetPosition(0, joint_position_command_[j]);
 #endif
         break;
@@ -354,13 +358,13 @@ void DefaultRobotHWSim::writeSim(ros::Time time, ros::Duration period)
 
       case VELOCITY:
 #if GAZEBO_MAJOR_VERSION > 2
-        if (physics_type_.compare("dart") == 0)
+        if (physics_type_.compare("ode") == 0)
         {
-          sim_joints_[j]->SetVelocity(0, e_stop_active_ ? 0 : joint_velocity_command_[j]);
+          sim_joints_[j]->SetParam("vel", 0, e_stop_active_ ? 0 : joint_velocity_command_[j]);
         }
         else 
         {
-          sim_joints_[j]->SetParam("vel", 0, e_stop_active_ ? 0 : joint_velocity_command_[j]);
+          sim_joints_[j]->SetVelocity(0, e_stop_active_ ? 0 : joint_velocity_command_[j]);
         }
 #else
         sim_joints_[j]->SetVelocity(0, e_stop_active_ ? 0 : joint_velocity_command_[j]);

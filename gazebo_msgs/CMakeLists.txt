@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0.2)
+cmake_minimum_required(VERSION 2.8.3)
 project(gazebo_msgs)
 
 find_package(catkin REQUIRED COMPONENTS
@@ -21,6 +21,8 @@ add_message_files(
   ModelStates.msg
   ODEJointProperties.msg
   ODEPhysics.msg
+  PerformanceMetrics.msg
+  SensorPerformanceMetric.msg
   WorldState.msg
   )
 

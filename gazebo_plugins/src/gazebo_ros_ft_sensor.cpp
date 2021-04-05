@@ -22,7 +22,6 @@
 
 #include <gazebo_plugins/gazebo_ros_ft_sensor.h>
 #include <tf/tf.h>
-#include <ignition/math/Rand.hh>
 
 namespace gazebo
 {
@@ -33,6 +32,7 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboRosFT);
 GazeboRosFT::GazeboRosFT()
 {
   this->ft_connect_count_ = 0;
+  this->seed = 0;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -223,10 +223,12 @@ double GazeboRosFT::GaussianKernel(double mu, double sigma)
   // normally disbributed normal variables see wikipedia
 
   // normalized uniform random variable
-  double U = ignition::math::Rand::DblUniform();
+  double U = static_cast<double>(rand_r(&this->seed)) /
+             static_cast<double>(RAND_MAX);
 
   // normalized uniform random variable
-  double V = ignition::math::Rand::DblUniform();
+  double V = static_cast<double>(rand_r(&this->seed)) /
+             static_cast<double>(RAND_MAX);
 
   double X = sqrt(-2.0 * ::log(U)) * cos(2.0*M_PI * V);
   // double Y = sqrt(-2.0 * ::log(U)) * sin(2.0*M_PI * V);

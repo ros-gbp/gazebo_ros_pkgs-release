@@ -236,15 +236,6 @@ void GazeboRosCameraUtils::Load(sensors::SensorPtr _parent,
   else
     this->distortion_t2_ = this->sdf->Get<double>("distortionT2");
 
-  // TODO: make default behavior auto_distortion_ = true
-  if (!this->sdf->HasElement("autoDistortion"))
-  {
-    ROS_DEBUG_NAMED("camera_utils", "Camera plugin missing <autoDistortion>, defaults to false");
-    this->auto_distortion_ = false;
-  }
-  else
-    this->auto_distortion_ = this->sdf->Get<bool>("autoDistortion");
-
   if (!this->sdf->HasElement("borderCrop"))
   {
     ROS_DEBUG_NAMED("camera_utils", "Camera plugin missing <borderCrop>, defaults to true");
@@ -318,7 +309,7 @@ void GazeboRosCameraUtils::LoadThread()
   else
   {
     ROS_WARN_NAMED("camera_utils", "dynamic reconfigure is not enabled for this image topic [%s]"
-             " becuase <cameraName> is not specified",
+             " because <cameraName> is not specified",
              this->image_topic_name_.c_str());
   }
 
@@ -332,7 +323,7 @@ void GazeboRosCameraUtils::LoadThread()
   // publish rates.
   // If someone connects to camera_info, sensor will be activated
   // and camera_info will be published alongside image_raw with the
-  // same timestamps.  This incurrs additional computational cost when
+  // same timestamps.  This incurs additional computational cost when
   // there are subscribers to camera_info, but better mimics behavior
   // of image_pipeline.
   ros::AdvertiseOptions cio =
@@ -391,11 +382,7 @@ void GazeboRosCameraUtils::TriggerCameraInternal(
 // Set Horizontal Field of View
 void GazeboRosCameraUtils::SetHFOV(const std_msgs::Float64::ConstPtr& hfov)
 {
-#if GAZEBO_MAJOR_VERSION >= 7
   this->camera_->SetHFOV(ignition::math::Angle(hfov->data));
-#else
-  this->camera_->SetHFOV(gazebo::math::Angle(hfov->data));
-#endif
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -531,7 +518,7 @@ void GazeboRosCameraUtils::Init()
                " is inconsistent with specified image_width [%d] and"
                " HFOV [%f].   Please double check to see that"
                " focal_length = width_ / (2.0 * tan(HFOV/2.0)),"
-               " the explected focal_lengtth value is [%f],"
+               " the expected focal_length value is [%f],"
                " please update your camera_ model description accordingly.",
                 this->focal_length_, this->parentSensor_->Name().c_str(),
                 this->width_, hfov,
@@ -552,30 +539,11 @@ void GazeboRosCameraUtils::Init()
   camera_info_msg.D.resize(5);
 #endif
   // Allow the user to disable automatic cropping (used to remove barrel
-  // distortion black border. The crop can be useful, but also skewes
+  // distortion black border. The crop can be useful, but also skews
   // the lens distortion, making the supplied k and t values incorrect.
   if(this->camera_->LensDistortion())
   {
     this->camera_->LensDistortion()->SetCrop(this->border_crop_);
-  }
-
-  // Get distortion parameters from gazebo sensor if auto_distortion is true
-  if(this->auto_distortion_)
-  {
-#if GAZEBO_MAJOR_VERSION >= 8
-    this->distortion_k1_ = this->camera_->LensDistortion()->K1();
-    this->distortion_k2_ = this->camera_->LensDistortion()->K2();
-    this->distortion_k3_ = this->camera_->LensDistortion()->K3();
-    this->distortion_t1_ = this->camera_->LensDistortion()->P1();
-    this->distortion_t2_ = this->camera_->LensDistortion()->P2();
-#else
-    // TODO: remove version gaurd once gazebo7 is not supported
-    this->distortion_k1_ = this->camera_->LensDistortion()->GetK1();
-    this->distortion_k2_ = this->camera_->LensDistortion()->GetK2();
-    this->distortion_k3_ = this->camera_->LensDistortion()->GetK3();
-    this->distortion_t1_ = this->camera_->LensDistortion()->GetP1();
-    this->distortion_t2_ = this->camera_->LensDistortion()->GetP2();
-#endif
   }
 
   // D = {k1, k2, t1, t2, k3}, as specified in:

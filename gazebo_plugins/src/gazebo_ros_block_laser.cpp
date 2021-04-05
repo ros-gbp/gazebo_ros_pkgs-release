@@ -22,7 +22,6 @@
 
 #include <algorithm>
 #include <assert.h>
-#include <limits>
 
 #include <gazebo_plugins/gazebo_ros_block_laser.h>
 #include <gazebo_plugins/gazebo_ros_utils.h>
@@ -305,25 +304,15 @@ void GazeboRosBlockLaser::PutLaserData(common::Time &_updateTime)
       j3 = hja + vjb * rayCount;
       j4 = hjb + vjb * rayCount;
       // range readings of 4 corners
-      r1 = this->parent_ray_sensor_->LaserShape()->GetRange(j1);
-      r2 = this->parent_ray_sensor_->LaserShape()->GetRange(j2);
-      r3 = this->parent_ray_sensor_->LaserShape()->GetRange(j3);
-      r4 = this->parent_ray_sensor_->LaserShape()->GetRange(j4);
+      r1 = std::min(this->parent_ray_sensor_->LaserShape()->GetRange(j1) , maxRange-minRange);
+      r2 = std::min(this->parent_ray_sensor_->LaserShape()->GetRange(j2) , maxRange-minRange);
+      r3 = std::min(this->parent_ray_sensor_->LaserShape()->GetRange(j3) , maxRange-minRange);
+      r4 = std::min(this->parent_ray_sensor_->LaserShape()->GetRange(j4) , maxRange-minRange);
 
       // Range is linear interpolation if values are close,
       // and min if they are very different
       r = (1-vb)*((1 - hb) * r1 + hb * r2)
          +   vb *((1 - hb) * r3 + hb * r4);
-
-      // REP 117 says readings too close to the sensor become -inf, and too far away +inf
-      if (r < minRange)
-      {
-        r = -std::numeric_limits<double>::infinity();
-      }
-      else if ( r > maxRange)
-      {
-        r = std::numeric_limits<double>::infinity();
-      }
 
       // Intensity is averaged
       intensity = 0.25*(this->parent_ray_sensor_->LaserShape()->GetRetro(j1) +
@@ -346,20 +335,29 @@ void GazeboRosBlockLaser::PutLaserData(common::Time &_updateTime)
       /*  point scan from laser                                      */
       /*                                                             */
       /***************************************************************/
-      geometry_msgs::Point32 point;
-      //pAngle is rotated by yAngle:
-      point.x = r * cos(pAngle) * cos(yAngle);
-      point.y = r * cos(pAngle) * sin(yAngle);
-      point.z = r * sin(pAngle);
-
-      if (fabs(maxRange - r) > EPSILON_DIFF)
+      //compare 2 doubles
+      double diffRange = maxRange - minRange;
+      double diff  = diffRange - r;
+      if (fabs(diff) < EPSILON_DIFF)
       {
-        // add noise to range only if not at max range
-        point.x += this->GaussianKernel(0, this->gaussian_noise_);
-        point.y += this->GaussianKernel(0, this->gaussian_noise_);
-        point.z += this->GaussianKernel(0, this->gaussian_noise_);
+        // no noise if at max range
+        geometry_msgs::Point32 point;
+        //pAngle is rotated by yAngle:
+        point.x = r * cos(pAngle) * cos(yAngle);
+        point.y = r * cos(pAngle) * sin(yAngle);
+        point.z = r * sin(pAngle);
+
+        this->cloud_msg_.points.push_back(point);
       }
-      this->cloud_msg_.points.push_back(point);
+      else
+      {
+        geometry_msgs::Point32 point;
+        //pAngle is rotated by yAngle:
+        point.x = r * cos(pAngle) * cos(yAngle) + this->GaussianKernel(0,this->gaussian_noise_);
+        point.y = r * cos(pAngle) * sin(yAngle) + this->GaussianKernel(0,this->gaussian_noise_);
+        point.z = r * sin(pAngle) + this->GaussianKernel(0,this->gaussian_noise_);
+        this->cloud_msg_.points.push_back(point);
+      } // only 1 channel
 
       this->cloud_msg_.channels[0].values.push_back(intensity + this->GaussianKernel(0,this->gaussian_noise_)) ;
     }
