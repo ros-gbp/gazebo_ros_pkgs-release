@@ -21,6 +21,10 @@
  */
 
 #include <gazebo_plugins/gazebo_ros_imu.h>
+#include <ignition/math/Rand.hh>
+#ifdef ENABLE_PROFILER
+#include <ignition/common/Profiler.hh>
+#endif
 
 namespace gazebo
 {
@@ -31,7 +35,6 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboRosIMU)
 // Constructor
 GazeboRosIMU::GazeboRosIMU()
 {
-  this->seed = 0;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -216,6 +219,9 @@ bool GazeboRosIMU::ServiceCallback(std_srvs::Empty::Request &req,
 // Update the controller
 void GazeboRosIMU::UpdateChild()
 {
+#ifdef ENABLE_PROFILER
+  IGN_PROFILE("GazeboRosIMU::UpdateChild");
+#endif
 #if GAZEBO_MAJOR_VERSION >= 8
   common::Time cur_time = this->world_->SimTime();
 #else
@@ -229,6 +235,9 @@ void GazeboRosIMU::UpdateChild()
 
   if ((this->pub_.getNumSubscribers() > 0 && this->topic_name_ != ""))
   {
+#ifdef ENABLE_PROFILER
+    IGN_PROFILE_BEGIN("fill ROS message");
+#endif
     ignition::math::Pose3d pose;
     ignition::math::Quaterniond rot;
     ignition::math::Vector3d pos;
@@ -331,6 +340,9 @@ void GazeboRosIMU::UpdateChild()
 
     // save last time stamp
     this->last_time_ = cur_time;
+#ifdef ENABLE_PROFILER
+    IGN_PROFILE_END();
+#endif
   }
 }
 
@@ -343,12 +355,10 @@ double GazeboRosIMU::GaussianKernel(double mu, double sigma)
   // normally disbributed normal variables see wikipedia
 
   // normalized uniform random variable
-  double U = static_cast<double>(rand_r(&this->seed)) /
-             static_cast<double>(RAND_MAX);
+  double U = ignition::math::Rand::DblUniform();
 
   // normalized uniform random variable
-  double V = static_cast<double>(rand_r(&this->seed)) /
-             static_cast<double>(RAND_MAX);
+  double V = ignition::math::Rand::DblUniform();
 
   double X = sqrt(-2.0 * ::log(U)) * cos(2.0*M_PI * V);
   // double Y = sqrt(-2.0 * ::log(U)) * sin(2.0*M_PI * V);

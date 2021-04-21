@@ -52,6 +52,10 @@
 
 #include <gazebo_plugins/gazebo_ros_diff_drive.h>
 
+#ifdef ENABLE_PROFILER
+#include <ignition/common/Profiler.hh>
+#endif
+
 #include <ignition/math/Angle.hh>
 #include <ignition/math/Pose3.hh>
 #include <ignition/math/Quaternion.hh>
@@ -71,9 +75,9 @@ enum {
 GazeboRosDiffDrive::GazeboRosDiffDrive() {}
 
 // Destructor
-GazeboRosDiffDrive::~GazeboRosDiffDrive() 
+GazeboRosDiffDrive::~GazeboRosDiffDrive()
 {
-	FiniChild();
+    FiniChild();
 }
 
 // Load the controller
@@ -92,19 +96,6 @@ void GazeboRosDiffDrive::Load ( physics::ModelPtr _parent, sdf::ElementPtr _sdf 
     gazebo_ros_->getParameterBoolean ( publishWheelTF_, "publishWheelTF", false );
     gazebo_ros_->getParameterBoolean ( publishOdomTF_, "publishOdomTF", true);
     gazebo_ros_->getParameterBoolean ( publishWheelJointState_, "publishWheelJointState", false );
-    gazebo_ros_->getParameterBoolean ( legacy_mode_, "legacyMode", true );
-
-    if (!_sdf->HasElement("legacyMode"))
-    {
-      ROS_ERROR_NAMED("diff_drive", "GazeboRosDiffDrive Plugin missing <legacyMode>, defaults to true\n"
-	       "This setting assumes you have a old package, where the right and left wheel are changed to fix a former code issue\n"
-	       "To get rid of this error just set <legacyMode> to false if you just created a new package.\n"
-	       "To fix an old package you have to exchange left wheel by the right wheel.\n"
-	       "If you do not want to fix this issue in an old package or your z axis points down instead of the ROS standard defined in REP 103\n"
-	       "just set <legacyMode> to true.\n"
-      );
-    }
-
     gazebo_ros_->getParameter<double> ( wheel_separation_, "wheelSeparation", 0.34 );
     gazebo_ros_->getParameter<double> ( wheel_diameter_, "wheelDiameter", 0.15 );
     gazebo_ros_->getParameter<double> ( wheel_accel, "wheelAcceleration", 0.0 );
@@ -252,7 +243,10 @@ void GazeboRosDiffDrive::publishWheelTF()
 // Update the controller
 void GazeboRosDiffDrive::UpdateChild()
 {
-
+#ifdef ENABLE_PROFILER
+  IGN_PROFILE("GazeboRosDiffDrive::UpdateChild");
+  IGN_PROFILE_BEGIN("update");
+#endif
     /* force reset SetParam("fmax") since Joint::Reset reset MaxForce to zero at
        https://bitbucket.org/osrf/gazebo/src/8091da8b3c529a362f39b042095e12c94656a5d1/gazebo/physics/Joint.cc?at=gazebo2_2.2.5#cl-331
        (this has been solved in https://bitbucket.org/osrf/gazebo/diff/gazebo/physics/Joint.cc?diff2=b64ff1b7b6ff&at=issue_964 )
@@ -312,6 +306,9 @@ void GazeboRosDiffDrive::UpdateChild()
         }
         last_update_time_+= common::Time ( update_period_ );
     }
+#ifdef ENABLE_PROFILER
+    IGN_PROFILE_END();
+#endif
 }
 
 // Finalize the controller
@@ -331,16 +328,8 @@ void GazeboRosDiffDrive::getWheelVelocities()
     double vr = x_;
     double va = rot_;
 
-    if(legacy_mode_)
-    {
-      wheel_speed_[LEFT] = vr + va * wheel_separation_ / 2.0;
-      wheel_speed_[RIGHT] = vr - va * wheel_separation_ / 2.0;
-    }
-    else
-    {
-      wheel_speed_[LEFT] = vr - va * wheel_separation_ / 2.0;
-      wheel_speed_[RIGHT] = vr + va * wheel_separation_ / 2.0;
-    }
+    wheel_speed_[LEFT] = vr - va * wheel_separation_ / 2.0;
+    wheel_speed_[RIGHT] = vr + va * wheel_separation_ / 2.0;
 }
 
 void GazeboRosDiffDrive::cmdVelCallback ( const geometry_msgs::Twist::ConstPtr& cmd_msg )
@@ -378,16 +367,7 @@ void GazeboRosDiffDrive::UpdateOdometryEncoder()
     double sr = vr * ( wheel_diameter_ / 2.0 ) * seconds_since_last_update;
     double ssum = sl + sr;
 
-    double sdiff;
-    if(legacy_mode_)
-    {
-      sdiff = sl - sr;
-    }
-    else
-    {
-
-      sdiff = sr - sl;
-    }
+    double sdiff = sr - sl;
 
     double dx = ( ssum ) /2.0 * cos ( pose_encoder_.theta + ( sdiff ) / ( 2.0*b ) );
     double dy = ( ssum ) /2.0 * sin ( pose_encoder_.theta + ( sdiff ) / ( 2.0*b ) );
@@ -415,8 +395,8 @@ void GazeboRosDiffDrive::UpdateOdometryEncoder()
     odom_.pose.pose.orientation.w = qt.w();
 
     odom_.twist.twist.angular.z = w;
-    odom_.twist.twist.linear.x = dx/seconds_since_last_update;
-    odom_.twist.twist.linear.y = dy/seconds_since_last_update;
+    odom_.twist.twist.linear.x = v;
+    odom_.twist.twist.linear.y = 0;
 }
 
 void GazeboRosDiffDrive::publishOdometry ( double step_time )

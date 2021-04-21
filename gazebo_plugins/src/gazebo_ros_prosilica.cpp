@@ -35,6 +35,10 @@
 #include <gazebo/sensors/SensorTypes.hh>
 #include <gazebo/rendering/Camera.hh>
 
+#ifdef ENABLE_PROFILER
+#include <ignition/common/Profiler.hh>
+#endif
+
 #include <sdf/sdf.hh>
 #include <sdf/Param.hh>
 
@@ -44,10 +48,7 @@
 #include <diagnostic_updater/diagnostic_updater.h>
 #include <sensor_msgs/RegionOfInterest.h>
 
-#include <opencv/cv.h>
-#include <opencv/highgui.h>
-
-#include <opencv/cvwimage.h>
+#include <opencv2/highgui.hpp>
 
 #include <boost/scoped_ptr.hpp>
 #include <boost/bind.hpp>
@@ -55,6 +56,8 @@
 #include <boost/thread.hpp>
 #include <boost/thread/recursive_mutex.hpp>
 #include <string>
+#include <chrono>
+#include <thread>
 
 namespace gazebo
 {
@@ -126,6 +129,9 @@ void GazeboRosProsilica::OnNewImageFrame(const unsigned char *_image,
     unsigned int _width, unsigned int _height, unsigned int _depth,
     const std::string &_format)
 {
+#ifdef ENABLE_PROFILER
+  IGN_PROFILE("GazeboRosProsilica::OnNewImageFrame");
+#endif
   if (!this->rosnode_->getParam(this->mode_param_name,this->mode_))
       this->mode_ = "streaming";
 
@@ -151,8 +157,18 @@ void GazeboRosProsilica::OnNewImageFrame(const unsigned char *_image,
       {
         if (sensor_update_time - this->last_update_time_ >= this->update_period_)
         {
+#ifdef ENABLE_PROFILER
+          IGN_PROFILE_BEGIN("PutCameraData");
+#endif
           this->PutCameraData(_image, sensor_update_time);
+#ifdef ENABLE_PROFILER
+          IGN_PROFILE_END();
+          IGN_PROFILE_BEGIN("PublishCameraInfo");
+#endif
           this->PublishCameraInfo(sensor_update_time);
+#ifdef ENABLE_PROFILER
+          IGN_PROFILE_END();
+#endif
           this->last_update_time_ = sensor_update_time;
         }
       }
@@ -320,7 +336,7 @@ void GazeboRosProsilica::pollCallback(polled_camera::GetPolledImage::Request& re
         }
       }
     }
-    usleep(100000);
+    std::this_thread::sleep_for(std::chrono::microseconds(100000));
   }
   (*this->image_connect_count_)--;
   rsp.success = true;

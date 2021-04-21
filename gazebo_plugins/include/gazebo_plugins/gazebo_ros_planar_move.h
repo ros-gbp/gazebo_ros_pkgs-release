@@ -76,6 +76,8 @@ namespace gazebo {
       std::string odometry_frame_;
       std::string robot_base_frame_;
       double odometry_rate_;
+      double cmd_timeout_;
+      ros::Time last_cmd_received_time_;
 
       // Custom Callback Queue
       ros::CallbackQueue queue_;
@@ -89,7 +91,6 @@ namespace gazebo {
       double y_;
       double rot_;
       bool alive_;
-      bool enable_y_axis_; ///< Enable Y-axis movement.
       common::Time last_odom_publish_time_;
       ignition::math::Pose3d last_odom_pose_;
 

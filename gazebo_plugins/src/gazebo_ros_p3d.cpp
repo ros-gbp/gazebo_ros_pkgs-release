@@ -20,6 +20,10 @@
 #include <stdlib.h>
 
 #include "gazebo_plugins/gazebo_ros_p3d.h"
+#ifdef ENABLE_PROFILER
+#include <ignition/common/Profiler.hh>
+#endif
+#include <ignition/math/Rand.hh>
 
 namespace gazebo
 {
@@ -29,7 +33,6 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboRosP3D);
 // Constructor
 GazeboRosP3D::GazeboRosP3D()
 {
-  this->seed = 0;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -212,6 +215,9 @@ void GazeboRosP3D::Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf)
 // Update the controller
 void GazeboRosP3D::UpdateChild()
 {
+#ifdef ENABLE_PROFILER
+  IGN_PROFILE("GazeboRosP3D::UpdateChild");
+#endif
   if (!this->link_)
     return;
 
@@ -220,7 +226,9 @@ void GazeboRosP3D::UpdateChild()
 #else
   common::Time cur_time = this->world_->GetSimTime();
 #endif
-
+#ifdef ENABLE_PROFILER
+  IGN_PROFILE_BEGIN("fill ROS message");
+#endif
   if (cur_time < this->last_time_)
   {
       ROS_WARN_NAMED("p3d", "Negative update time difference detected.");
@@ -357,6 +365,9 @@ void GazeboRosP3D::UpdateChild()
       this->last_time_ = cur_time;
     }
   }
+#ifdef ENABLE_PROFILER
+  IGN_PROFILE_END();
+#endif
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -367,12 +378,10 @@ double GazeboRosP3D::GaussianKernel(double mu, double sigma)
   // normally disbributed normal variables see wikipedia
 
   // normalized uniform random variable
-  double U = static_cast<double>(rand_r(&this->seed)) /
-             static_cast<double>(RAND_MAX);
+  double U = ignition::math::Rand::DblUniform();
 
   // normalized uniform random variable
-  double V = static_cast<double>(rand_r(&this->seed)) /
-             static_cast<double>(RAND_MAX);
+  double V = ignition::math::Rand::DblUniform();
 
   double X = sqrt(-2.0 * ::log(U)) * cos(2.0*M_PI * V);
   // double Y = sqrt(-2.0 * ::log(U)) * sin(2.0*M_PI * V);

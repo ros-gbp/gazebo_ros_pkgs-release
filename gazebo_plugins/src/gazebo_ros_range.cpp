@@ -48,10 +48,15 @@
 #include <gazebo/sensors/RaySensor.hh>
 #include <gazebo/sensors/SensorTypes.hh>
 
+#ifdef ENABLE_PROFILER
+#include <ignition/common/Profiler.hh>
+#endif
+
 #include <sdf/sdf.hh>
 #include <sdf/Param.hh>
 
 #include <tf/tf.h>
+#include <ignition/math/Rand.hh>
 
 namespace gazebo
 {
@@ -62,7 +67,6 @@ GZ_REGISTER_SENSOR_PLUGIN(GazeboRosRange)
 // Constructor
 GazeboRosRange::GazeboRosRange()
 {
-  this->seed = 0;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -241,6 +245,9 @@ void GazeboRosRange::RangeDisconnect()
 // Update the plugin
 void GazeboRosRange::OnNewLaserScans()
 {
+#ifdef ENABLE_PROFILER
+  IGN_PROFILE("GazeboRosRange::OnNewLaserScans");
+#endif
   if (this->topic_name_ != "")
   {
 #if GAZEBO_MAJOR_VERSION >= 8
@@ -258,7 +265,13 @@ void GazeboRosRange::OnNewLaserScans()
     {
       common::Time sensor_update_time =
         this->parent_sensor_->LastUpdateTime();
+#ifdef ENABLE_PROFILER
+      IGN_PROFILE_BEGIN("PutRangeData");
+#endif
       this->PutRangeData(sensor_update_time);
+#ifdef ENABLE_PROFILER
+      IGN_PROFILE_END();
+#endif
       this->last_update_time_ = cur_time;
     }
   }
@@ -318,12 +331,10 @@ double GazeboRosRange::GaussianKernel(double mu, double sigma)
   // normally disbributed normal variables see wikipedia
 
   // normalized uniform random variable
-  double U = static_cast<double>(rand_r(&this->seed)) /
-             static_cast<double>(RAND_MAX);
+  double U = ignition::math::Rand::DblUniform();
 
   // normalized uniform random variable
-  double V = static_cast<double>(rand_r(&this->seed)) /
-             static_cast<double>(RAND_MAX);
+  double V = ignition::math::Rand::DblUniform();
 
   double X = sqrt(-2.0 * ::log(U)) * cos(2.0*M_PI * V);
   // double Y = sqrt(-2.0 * ::log(U)) * sin(2.0*M_PI * V);

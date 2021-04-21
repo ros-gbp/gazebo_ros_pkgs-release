@@ -28,6 +28,10 @@
 
 #include "gazebo_plugins/gazebo_ros_multicamera.h"
 
+#ifdef ENABLE_PROFILER
+#include <ignition/common/Profiler.hh>
+#endif
+
 namespace gazebo
 {
 // Register this plugin with the simulator
@@ -98,14 +102,31 @@ void GazeboRosMultiCamera::Load(sensors::SensorPtr _parent,
 void GazeboRosMultiCamera::OnNewFrame(const unsigned char *_image,
     GazeboRosCameraUtils* util)
 {
+#ifdef ENABLE_PROFILER
+  IGN_PROFILE("GazeboRosMultiCamera::OnNewFrame");
+#endif
+# if GAZEBO_MAJOR_VERSION >= 7
   common::Time sensor_update_time = util->parentSensor_->LastMeasurementTime();
+# else
+  common::Time sensor_update_time = util->parentSensor_->GetLastMeasurementTime();
+# endif
 
   if (util->parentSensor_->IsActive())
   {
     if (sensor_update_time - util->last_update_time_ >= util->update_period_)
     {
+#ifdef ENABLE_PROFILER
+      IGN_PROFILE_BEGIN("PutCameraData");
+#endif
       util->PutCameraData(_image, sensor_update_time);
+#ifdef ENABLE_PROFILER
+      IGN_PROFILE_END();
+      IGN_PROFILE_BEGIN("PublishCameraInfo");
+#endif
       util->PublishCameraInfo(sensor_update_time);
+#ifdef ENABLE_PROFILER
+      IGN_PROFILE_END();
+#endif
       util->last_update_time_ = sensor_update_time;
     }
   }

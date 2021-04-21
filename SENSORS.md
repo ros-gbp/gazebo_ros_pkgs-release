@@ -5,7 +5,7 @@
 As detailed in the CONTRIBUITON.md guide, Gazebo ROS packages are a wrapper that
 connects upstream Gazebo simulations with the ROS framework. Ideally all the
 plugins in this repository should implement the ROS wrapper over a gazebo plugin
-(plugin code in the [upstream gazebo repository](https://github.com/osrf/gazebo)).
+(plugin code in the [upstream gazebo repository](https://bitbucket.org/osrf/gazebo/)).
 
 ## Sensors
 
@@ -172,13 +172,6 @@ details about which code should be submitted to this repository.
    - ***gazebo_plugin:*** --
    - ***example:*** multi_robot_scenario/xacro/p3dx/pioneer3dx_plugins.xacro
 
- * ***gazebo_moveit_planning_scene***
-   - ***description:*** ROS plugin that publishes the obstacle information for [moveit](https://github.com/ros-planning/moveit).
-      Publishes: moveit_msgs::PlanningScene
-   - ***status:*** maintained
-   - ***gazebo_plugin:*** --
-   - ***example:***
-
  * ***gazebo_ros_p3d***
    - ***description:*** publish 3D position interface for ground truth
      Publishes: nav_msgs::Odometry
@@ -235,12 +228,6 @@ details about which code should be submitted to this repository.
 
 
 ## List of deprecated plugins (to be removed)
-
- * ***gazebo_ros_joint_trajectory***
-    - ***description:*** migrate to gazebo_ros_joint_pose_trajectory
-    - ***status:*** deprecated. To be removed in Lunar.
-    - ***gazebo plugin:*** --
-    - ***example:*** --
 
  * ***camera_synchronizer***
  * ***vision_reconfigure***

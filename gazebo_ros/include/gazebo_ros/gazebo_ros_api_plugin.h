@@ -257,8 +257,9 @@ private:
   /// \brief
   void forceJointSchedulerSlot();
 
-  /// \brief
-  void publishSimTime(const boost::shared_ptr<gazebo::msgs::WorldStatistics const> &msg);
+  /// \brief Callback to WorldUpdateBegin that publishes /clock.
+  /// If pub_clock_frequency_ <= 0 (default behavior), it publishes every time step.
+  /// Otherwise, it attempts to publish at that frequency in Hz.
   void publishSimTime();
 
   /// \brief
@@ -436,6 +437,9 @@ private:
 
   /// \brief index counters to count the accesses on models via GetModelState
   std::map<std::string, unsigned int> access_count_get_model_state_;
+
+  /// \brief enable the communication of gazebo information using ROS service/topics
+  bool enable_ros_network_;
 };
 }
 #endif

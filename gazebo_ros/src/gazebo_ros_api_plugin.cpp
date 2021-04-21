@@ -23,19 +23,22 @@
 #include <gazebo/common/Events.hh>
 #include <gazebo/gazebo_config.h>
 #include <gazebo_ros/gazebo_ros_api_plugin.h>
+#include <chrono>
+#include <thread>
 
 namespace gazebo
 {
 
 GazeboRosApiPlugin::GazeboRosApiPlugin() :
-  plugin_loaded_(false),
+  physics_reconfigure_initialized_(false),
+  world_created_(false),
   stop_(false),
+  plugin_loaded_(false),
   pub_link_states_connection_count_(0),
   pub_model_states_connection_count_(0),
   pub_performance_metrics_connection_count_(0),
-  physics_reconfigure_initialized_(false),
   pub_clock_frequency_(0),
-  world_created_(false)
+  enable_ros_network_(true)
 {
   robot_namespace_.clear();
 }
@@ -129,7 +132,8 @@ void GazeboRosApiPlugin::Load(int argc, char** argv)
   {
     ROS_WARN_STREAM_NAMED("api_plugin","No ROS master - start roscore to continue...");
     // wait 0.5 second
-    usleep(500*1000); // can't use ROS Time here b/c node handle is not yet initialized
+    // can't use ROS Time here b/c node handle is not yet initialized
+    std::this_thread::sleep_for(std::chrono::microseconds(500*1000));
 
     if(stop_)
     {
@@ -152,6 +156,8 @@ void GazeboRosApiPlugin::Load(int argc, char** argv)
 
   // below needs the world to be created first
   load_gazebo_ros_api_plugin_event_ = gazebo::event::Events::ConnectWorldCreated(boost::bind(&GazeboRosApiPlugin::loadGazeboRosApiPlugin,this,_1));
+
+  nh_->getParam("enable_ros_network", enable_ros_network_);
 
   plugin_loaded_ = true;
   ROS_INFO_NAMED("api_plugin", "Finished loading Gazebo ROS API Plugin.");
@@ -182,7 +188,6 @@ void GazeboRosApiPlugin::loadGazeboRosApiPlugin(std::string world_name)
 
   gazebonode_ = gazebo::transport::NodePtr(new gazebo::transport::Node());
   gazebonode_->Init(world_name);
-  //stat_sub_ = gazebonode_->Subscribe("~/world_stats", &GazeboRosApiPlugin::publishSimTime, this); // TODO: does not work in server plugin?
   factory_pub_ = gazebonode_->Advertise<gazebo::msgs::Factory>("~/factory");
   factory_light_pub_ = gazebonode_->Advertise<gazebo::msgs::Light>("~/factory/light");
   light_modify_pub_ = gazebonode_->Advertise<gazebo::msgs::Light>("~/light/modify");
@@ -193,8 +198,23 @@ void GazeboRosApiPlugin::loadGazeboRosApiPlugin(std::string world_name)
   pub_model_states_connection_count_ = 0;
   pub_performance_metrics_connection_count_ = 0;
 
+  // Manage clock for simulated ros time
+  pub_clock_ = nh_->advertise<rosgraph_msgs::Clock>("/clock", 10);
+
   /// \brief advertise all services
-  advertiseServices();
+  if (enable_ros_network_)
+    advertiseServices();
+
+  // set param for use_sim_time if not set by user already
+  if(!(nh_->hasParam("/use_sim_time")))
+    nh_->setParam("/use_sim_time", true);
+
+  nh_->getParam("pub_clock_frequency", pub_clock_frequency_);
+#if GAZEBO_MAJOR_VERSION >= 8
+  last_pub_clock_time_ = world_->SimTime();
+#else
+  last_pub_clock_time_ = world_->GetSimTime();
+#endif
 
   // hooks for applying forces, publishing simtime on /clock
   wrench_update_event_ = gazebo::event::Events::ConnectWorldUpdateBegin(boost::bind(&GazeboRosApiPlugin::wrenchBodySchedulerSlot,this));
@@ -245,8 +265,11 @@ void GazeboRosApiPlugin::gazeboQueueThread()
 
 void GazeboRosApiPlugin::advertiseServices()
 {
-  // publish clock for simulated ros time
-  pub_clock_ = nh_->advertise<rosgraph_msgs::Clock>("/clock",10);
+  if (! enable_ros_network_)
+  {
+    ROS_INFO_NAMED("api_plugin", "ROS gazebo topics/services are disabled");
+    return;
+  }
 
   // Advertise spawn services on the custom queue
   std::string spawn_sdf_model_service_name("spawn_sdf_model");
@@ -536,19 +559,6 @@ void GazeboRosApiPlugin::advertiseServices()
                                                           boost::bind(&GazeboRosApiPlugin::resetWorld,this,_1,_2),
                                                           ros::VoidPtr(), &gazebo_queue_);
   reset_world_service_ = nh_->advertiseService(reset_world_aso);
-
-
-  // set param for use_sim_time if not set by user already
-  if(!(nh_->hasParam("/use_sim_time")))
-    nh_->setParam("/use_sim_time", true);
-
-  // todo: contemplate setting environment variable ROBOT=sim here???
-  nh_->getParam("pub_clock_frequency", pub_clock_frequency_);
-#if GAZEBO_MAJOR_VERSION >= 8
-  last_pub_clock_time_ = world_->SimTime();
-#else
-  last_pub_clock_time_ = world_->GetSimTime();
-#endif
 }
 
 void GazeboRosApiPlugin::onLinkStatesConnect()
@@ -864,7 +874,7 @@ bool GazeboRosApiPlugin::deleteModel(gazebo_msgs::DeleteModel::Request &req,
 #endif
     }
     ROS_DEBUG_NAMED("api_plugin", "Waiting for model deletion (%s)",req.model_name.c_str());
-    usleep(1000);
+    std::this_thread::sleep_for(std::chrono::microseconds(1000));
   }
 
   // set result
@@ -910,7 +920,7 @@ bool GazeboRosApiPlugin::deleteLight(gazebo_msgs::DeleteLight::Request &req,
         return true;
       }
       // Check every 100ms
-      usleep(100000);
+      std::this_thread::sleep_for(std::chrono::microseconds(100000));
     }
   }
 
@@ -1108,7 +1118,7 @@ bool GazeboRosApiPlugin::getWorldProperties(gazebo_msgs::GetWorldProperties::Req
   for (unsigned int i = 0; i < world_->GetModelCount(); i ++)
     res.model_names.push_back(world_->GetModel(i)->GetName());
 #endif
-  gzerr << "disablign rendering has not been implemented, rendering is always enabled\n";
+  gzerr << "disabling rendering has not been implemented, rendering is always enabled\n";
   res.rendering_enabled = true; //world->GetRenderEngineEnabled();
   res.success = true;
   res.status_message = "GetWorldProperties: got properties";
@@ -1353,14 +1363,33 @@ bool GazeboRosApiPlugin::setLightProperties(gazebo_msgs::SetLightProperties::Req
 
     phy_light->FillMsg(light);
 
+    light.set_cast_shadows(req.cast_shadows);
+
     light.mutable_diffuse()->set_r(req.diffuse.r);
     light.mutable_diffuse()->set_g(req.diffuse.g);
     light.mutable_diffuse()->set_b(req.diffuse.b);
     light.mutable_diffuse()->set_a(req.diffuse.a);
 
+    light.mutable_specular()->set_r(req.specular.r);
+    light.mutable_specular()->set_g(req.specular.g);
+    light.mutable_specular()->set_b(req.specular.b);
+    light.mutable_specular()->set_a(req.specular.a);
+
     light.set_attenuation_constant(req.attenuation_constant);
     light.set_attenuation_linear(req.attenuation_linear);
     light.set_attenuation_quadratic(req.attenuation_quadratic);
+
+    light.mutable_direction()->set_x(req.direction.x);
+    light.mutable_direction()->set_y(req.direction.y);
+    light.mutable_direction()->set_z(req.direction.z);
+
+    light.mutable_pose()->mutable_position()->set_x(req.pose.position.x);
+    light.mutable_pose()->mutable_position()->set_y(req.pose.position.y);
+    light.mutable_pose()->mutable_position()->set_z(req.pose.position.z);
+    light.mutable_pose()->mutable_orientation()->set_w(req.pose.orientation.w);
+    light.mutable_pose()->mutable_orientation()->set_x(req.pose.orientation.x);
+    light.mutable_pose()->mutable_orientation()->set_y(req.pose.orientation.y);
+    light.mutable_pose()->mutable_orientation()->set_z(req.pose.orientation.z);
 
     light_modify_pub_->Publish(light, true);
 
@@ -1614,7 +1643,11 @@ bool GazeboRosApiPlugin::setModelState(gazebo_msgs::SetModelState::Request &req,
     world_->SetPaused(true);
     model->SetWorldPose(target_pose);
     world_->SetPaused(is_paused);
+#if GAZEBO_MAJOR_VERSION >= 8
     //ignition::math::Pose3d p3d = model->WorldPose();
+#else
+    //ignition::math::Pose3d p3d = model->GetWorldPose().Ign();
+#endif
     //ROS_ERROR_NAMED("api_plugin", "model updated state: %f %f %f",p3d.Pos().X(),p3d.Pos().Y(),p3d.Pos().Z());
 
     // set model velocity
@@ -1945,12 +1978,9 @@ bool GazeboRosApiPlugin::applyBodyWrench(gazebo_msgs::ApplyBodyWrench::Request &
     //        first, translate by reference point to the body frame
 #if GAZEBO_MAJOR_VERSION >= 8
     ignition::math::Pose3d framePose = frame->WorldPose();
-#else
-    ignition::math::Pose3d framePose = frame->GetWorldPose().Ign();
-#endif
-#if GAZEBO_MAJOR_VERSION >= 8
     ignition::math::Pose3d bodyPose = body->WorldPose();
 #else
+    ignition::math::Pose3d framePose = frame->GetWorldPose().Ign();
     ignition::math::Pose3d bodyPose = body->GetWorldPose().Ign();
 #endif
     ignition::math::Pose3d target_to_reference = framePose - bodyPose;
@@ -2136,24 +2166,6 @@ void GazeboRosApiPlugin::forceJointSchedulerSlot()
   lock_.unlock();
 }
 
-void GazeboRosApiPlugin::publishSimTime(const boost::shared_ptr<gazebo::msgs::WorldStatistics const> &msg)
-{
-  ROS_ERROR_NAMED("api_plugin", "CLOCK2");
-#if GAZEBO_MAJOR_VERSION >= 8
-  gazebo::common::Time sim_time = world_->SimTime();
-#else
-  gazebo::common::Time sim_time = world_->GetSimTime();
-#endif
-  if (pub_clock_frequency_ > 0 && (sim_time - last_pub_clock_time_).Double() < 1.0/pub_clock_frequency_)
-    return;
-
-  gazebo::common::Time currentTime = gazebo::msgs::Convert( msg->sim_time() );
-  rosgraph_msgs::Clock ros_time_;
-  ros_time_.clock.fromSec(currentTime.Double());
-  //  publish time to ros
-  last_pub_clock_time_ = sim_time;
-  pub_clock_.publish(ros_time_);
-}
 void GazeboRosApiPlugin::publishSimTime()
 {
 #if GAZEBO_MAJOR_VERSION >= 8
@@ -2352,8 +2364,8 @@ void GazeboRosApiPlugin::physicsReconfigureCallback(gazebo_ros::PhysicsConfig &c
 
 void GazeboRosApiPlugin::physicsReconfigureThread()
 {
-  physics_reconfigure_set_client_ = nh_->serviceClient<gazebo_msgs::SetPhysicsProperties>("/gazebo/set_physics_properties");
-  physics_reconfigure_get_client_ = nh_->serviceClient<gazebo_msgs::GetPhysicsProperties>("/gazebo/get_physics_properties");
+  physics_reconfigure_set_client_ = nh_->serviceClient<gazebo_msgs::SetPhysicsProperties>("set_physics_properties");
+  physics_reconfigure_get_client_ = nh_->serviceClient<gazebo_msgs::GetPhysicsProperties>("get_physics_properties");
 
   // Wait until the rest of this plugin is loaded and the services are being offered
   physics_reconfigure_set_client_.waitForExistence();
@@ -2675,7 +2687,7 @@ bool GazeboRosApiPlugin::spawnAndConform(TiXmlDocument &gazebo_model_xml, const 
 #endif
   if ((isLight && light != NULL) || (model != NULL))
   {
-    ROS_ERROR_NAMED("api_plugin", "SpawnModel: Failure - model name %s already exists.",model_name.c_str());
+    ROS_ERROR_NAMED("api_plugin", "SpawnModel: Failure - model name %s already exist.",model_name.c_str());
     res.success = false;
     res.status_message = "SpawnModel: Failure - entity already exists.";
     return true;
@@ -2727,7 +2739,7 @@ bool GazeboRosApiPlugin::spawnAndConform(TiXmlDocument &gazebo_model_xml, const 
     ROS_DEBUG_STREAM_ONCE_NAMED("api_plugin","Waiting for " << timeout - ros::Time::now()
       << " for entity " << model_name << " to spawn");
 
-    usleep(2000);
+    std::this_thread::sleep_for(std::chrono::microseconds(2000));
   }
 
   // set result

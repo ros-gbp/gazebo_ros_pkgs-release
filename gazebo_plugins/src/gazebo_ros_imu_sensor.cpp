@@ -1,13 +1,13 @@
 /* Copyright [2015] [Alessandro Settimi]
- * 
+ *
  * email: ale.settimi@gmail.com
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,6 +18,10 @@
 #include <iostream>
 #include <gazebo/sensors/ImuSensor.hh>
 #include <gazebo/physics/World.hh>
+#ifdef ENABLE_PROFILER
+#include <ignition/common/Profiler.hh>
+#endif
+#include <ignition/math/Rand.hh>
 
 GZ_REGISTER_SENSOR_PLUGIN(gazebo::GazeboRosImuSensor)
 
@@ -26,7 +30,6 @@ gazebo::GazeboRosImuSensor::GazeboRosImuSensor(): SensorPlugin()
   accelerometer_data = ignition::math::Vector3d(0, 0, 0);
   gyroscope_data = ignition::math::Vector3d(0, 0, 0);
   orientation = ignition::math::Quaterniond(1,0,0,0);
-  seed=0;
   sensor=NULL;
 }
 
@@ -39,6 +42,28 @@ void gazebo::GazeboRosImuSensor::Load(gazebo::sensors::SensorPtr sensor_, sdf::E
   {
     ROS_FATAL("Error: Sensor pointer is NULL!");
     return;
+  }
+
+  bool initial_orientation_as_reference = false;
+  if (!sdf->HasElement("initialOrientationAsReference"))
+  {
+    ROS_INFO("<initialOrientationAsReference> is unset, using default value of false "
+             "to comply with REP 145 (world as orientation reference)");
+  }
+  else
+  {
+    initial_orientation_as_reference = sdf->Get<bool>("initialOrientationAsReference");
+  }
+
+  if (initial_orientation_as_reference)
+  {
+    ROS_WARN("<initialOrientationAsReference> set to true, this behavior is deprecated "
+             "as it does not comply with REP 145.");
+  }
+  else
+  {
+    // This complies with REP 145
+    sensor->SetWorldToReferenceOrientation(ignition::math::Quaterniond::Identity);
   }
 
   sensor->SetActive(true);
@@ -66,6 +91,9 @@ void gazebo::GazeboRosImuSensor::Load(gazebo::sensors::SensorPtr sensor_, sdf::E
 
 void gazebo::GazeboRosImuSensor::UpdateChild(const gazebo::common::UpdateInfo &/*_info*/)
 {
+#ifdef ENABLE_PROFILER
+  IGN_PROFILE("GazeboRosImuSensor::UpdateChild");
+#endif
   common::Time current_time = sensor->LastUpdateTime();
 
   if(update_rate>0 && (current_time-last_time).Double() < 1.0/update_rate) //update rate check
@@ -73,6 +101,9 @@ void gazebo::GazeboRosImuSensor::UpdateChild(const gazebo::common::UpdateInfo &/
 
   if(imu_data_publisher.getNumSubscribers() > 0)
   {
+#ifdef ENABLE_PROFILER
+    IGN_PROFILE_BEGIN("fill ROS message");
+#endif
     orientation = offset.Rot()*sensor->Orientation(); //applying offsets to the orientation measurement
     accelerometer_data = sensor->LinearAcceleration();
     gyroscope_data = sensor->AngularVelocity();
@@ -107,10 +138,15 @@ void gazebo::GazeboRosImuSensor::UpdateChild(const gazebo::common::UpdateInfo &/
     imu_msg.header.frame_id = body_name;
     imu_msg.header.stamp.sec = current_time.sec;
     imu_msg.header.stamp.nsec = current_time.nsec;
-
+#ifdef ENABLE_PROFILER
+    IGN_PROFILE_END();
     //publishing data
+    IGN_PROFILE_BEGIN("publish");
+#endif
     imu_data_publisher.publish(imu_msg);
-
+#ifdef ENABLE_PROFILER
+    IGN_PROFILE_END();
+#endif
     ros::spinOnce();
   }
 
@@ -120,8 +156,8 @@ void gazebo::GazeboRosImuSensor::UpdateChild(const gazebo::common::UpdateInfo &/
 double gazebo::GazeboRosImuSensor::GuassianKernel(double mu, double sigma)
 {
   // generation of two normalized uniform random variables
-  double U1 = static_cast<double>(rand_r(&seed)) / static_cast<double>(RAND_MAX);
-  double U2 = static_cast<double>(rand_r(&seed)) / static_cast<double>(RAND_MAX);
+  double U1 = ignition::math::Rand::DblUniform();
+  double U2 = ignition::math::Rand::DblUniform();
 
   // using Box-Muller transform to obtain a varaible with a standard normal distribution
   double Z0 = sqrt(-2.0 * ::log(U1)) * cos(2.0*M_PI * U2);
@@ -153,12 +189,12 @@ bool gazebo::GazeboRosImuSensor::LoadParameters()
   //TOPIC
   if (sdf->HasElement("topicName"))
   {
-    topic_name =  robot_namespace + sdf->Get<std::string>("topicName");
+    topic_name =  sdf->Get<std::string>("topicName");
     ROS_INFO_STREAM("<topicName> set to: "<<topic_name);
   }
   else
   {
-    topic_name = robot_namespace + "/imu_data";
+    topic_name = "imu_data";
     ROS_WARN_STREAM("missing <topicName>, set to /namespace/default: " << topic_name);
   }
 

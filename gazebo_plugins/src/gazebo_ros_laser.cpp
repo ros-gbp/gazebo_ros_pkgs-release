@@ -35,10 +35,15 @@
 #include <gazebo/sensors/SensorTypes.hh>
 #include <gazebo/transport/transport.hh>
 
+#ifdef ENABLE_PROFILER
+#include <ignition/common/Profiler.hh>
+#endif
+
 #include <tf/tf.h>
 #include <tf/transform_listener.h>
 
 #include <gazebo_plugins/gazebo_ros_laser.h>
+#include <ignition/math/Rand.hh>
 
 namespace gazebo
 {
@@ -49,7 +54,6 @@ GZ_REGISTER_SENSOR_PLUGIN(GazeboRosLaser)
 // Constructor
 GazeboRosLaser::GazeboRosLaser()
 {
-  this->seed = 0;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -127,10 +131,6 @@ void GazeboRosLaser::LoadThread()
   this->rosnode_ = new ros::NodeHandle(this->robot_namespace_);
 
   this->tf_prefix_ = tf::getPrefixParam(*this->rosnode_);
-  if(this->tf_prefix_.empty()) {
-      this->tf_prefix_ = this->robot_namespace_;
-      boost::trim_right_if(this->tf_prefix_,boost::is_any_of("/"));
-  }
   ROS_INFO_NAMED("laser", "Laser Plugin (ns = %s)  <tf_prefix_>, set to \"%s\"",
              this->robot_namespace_.c_str(), this->tf_prefix_.c_str());
 
@@ -179,6 +179,10 @@ void GazeboRosLaser::LaserDisconnect()
 // Convert new Gazebo message to ROS message and publish it
 void GazeboRosLaser::OnScan(ConstLaserScanStampedPtr &_msg)
 {
+#ifdef ENABLE_PROFILER
+  IGN_PROFILE("GazeboRosLaser::OnScan");
+  IGN_PROFILE_BEGIN("fill ROS message");
+#endif
   // We got a new message from the Gazebo sensor.  Stuff a
   // corresponding ROS message and publish it.
   sensor_msgs::LaserScan laser_msg;
@@ -200,5 +204,8 @@ void GazeboRosLaser::OnScan(ConstLaserScanStampedPtr &_msg)
             _msg->scan().intensities().end(),
             laser_msg.intensities.begin());
   this->pub_queue_->push(laser_msg, this->pub_);
+#ifdef ENABLE_PROFILER
+  IGN_PROFILE_END();
+#endif
 }
 }
