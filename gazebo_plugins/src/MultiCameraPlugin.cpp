@@ -78,13 +78,13 @@ void MultiCameraPlugin::Load(sensors::SensorPtr _sensor,
     {
       this->newFrameConnection.push_back(this->camera[i]->ConnectNewImageFrame(
         boost::bind(&MultiCameraPlugin::OnNewFrameLeft,
-        this, _1, _2, _3, _4, _5)));
+        this, boost::placeholders::_1, boost::placeholders::_2, boost::placeholders::_3, boost::placeholders::_4, boost::placeholders::_5)));
     }
     else if (cameraName.find("right") != std::string::npos)
     {
       this->newFrameConnection.push_back(this->camera[i]->ConnectNewImageFrame(
         boost::bind(&MultiCameraPlugin::OnNewFrameRight,
-        this, _1, _2, _3, _4, _5)));
+        this, boost::placeholders::_1, boost::placeholders::_2, boost::placeholders::_3, boost::placeholders::_4, boost::placeholders::_5)));
     }
   }
 
