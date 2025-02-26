@@ -46,7 +46,7 @@ VisionReconfigure::VisionReconfigure() : nh_("")
   //          and it publishes pub_header_, which is published by projector_controller in ethercat_trigger_controllers package in real life
   this->pub_projector_ = this->nh_.advertise<std_msgs::Int32>("/projector_wg6802418_controller/projector", 1,true); // publish latched for sim
   this->pub_header_ = this->nh_.advertise<std_msgs::Header>("/projector_controller/rising_edge_timestamps", 1,true); // publish latched for sim
-  dynamic_reconfigure::Server<gazebo_plugins::CameraSynchronizerConfig>::CallbackType f = boost::bind(&VisionReconfigure::ReconfigureCallback, this, _1, _2);
+  dynamic_reconfigure::Server<gazebo_plugins::CameraSynchronizerConfig>::CallbackType f = boost::bind(&VisionReconfigure::ReconfigureCallback, this, boost::placeholders::_1, boost::placeholders::_2);
   this->srv_.setCallback(f);
 
 

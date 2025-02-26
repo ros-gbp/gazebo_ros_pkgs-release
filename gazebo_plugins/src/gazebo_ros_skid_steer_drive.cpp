@@ -318,7 +318,7 @@ namespace gazebo {
     // ROS: Subscribe to the velocity command topic (usually "cmd_vel")
     ros::SubscribeOptions so =
       ros::SubscribeOptions::create<geometry_msgs::Twist>(command_topic_, 1,
-          boost::bind(&GazeboRosSkidSteerDrive::cmdVelCallback, this, _1),
+          boost::bind(&GazeboRosSkidSteerDrive::cmdVelCallback, this, boost::placeholders::_1),
           ros::VoidPtr(), &queue_);
 
     cmd_vel_subscriber_ = rosnode_->subscribe(so);

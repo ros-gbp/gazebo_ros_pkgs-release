@@ -86,7 +86,7 @@ void DistortionTest::cameraDistortionTest()
       trans.subscribe("/camera_undistorted/image_raw",
                       1,
                       boost::bind(&DistortionTest::imageCallback,
-                      dynamic_cast<DistortionTest*>(this), _1, 0)
+                      dynamic_cast<DistortionTest*>(this), boost::placeholders::_1, 0)
                      );
 
   cam_info_distorted_ = nullptr;
@@ -96,7 +96,7 @@ void DistortionTest::cameraDistortionTest()
       trans.subscribe("/camera_distorted/image_raw",
                       1,
                       boost::bind(&DistortionTest::imageCallback,
-                      dynamic_cast<DistortionTest*>(this), _1, 1)
+                      dynamic_cast<DistortionTest*>(this), boost::placeholders::_1, 1)
                      );
   cam_info_distorted_sub_ =
       nh_.subscribe("/camera_distorted/camera_info",
