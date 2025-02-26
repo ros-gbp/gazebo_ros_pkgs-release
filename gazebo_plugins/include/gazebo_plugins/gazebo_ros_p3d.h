@@ -68,6 +68,9 @@ namespace gazebo
     /// \brief The body of the frame to display pose, twist
     private: physics::LinkPtr reference_link_;
 
+    /// \brief Compute twist in the local coordinate frame
+    private: bool local_twist_;
+
 
     /// \brief pointer to ros node
     private: ros::NodeHandle* rosnode_;
