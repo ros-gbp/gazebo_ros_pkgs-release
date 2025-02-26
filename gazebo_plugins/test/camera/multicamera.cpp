@@ -56,7 +56,7 @@ TEST_F(MultiCameraTest, cameraSubscribeTest)
   message_filters::TimeSynchronizer<sensor_msgs::Image, sensor_msgs::Image> sync(
       cam_left_sub_, cam_right_sub_, 4);
   sync.registerCallback(boost::bind(&MultiCameraTest::imageCallback,
-      dynamic_cast<MultiCameraTest*>(this), _1, _2));
+      dynamic_cast<MultiCameraTest*>(this), boost::placeholders::_1, boost::placeholders::_2));
 #if 0
   // wait for gazebo to start publishing
   // TODO(lucasw) this isn't really necessary since this test

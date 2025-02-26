@@ -66,7 +66,7 @@ void GazeboRosElevator::Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf)
 
   ros::SubscribeOptions so =
     ros::SubscribeOptions::create<std_msgs::String>(topic, 1,
-        boost::bind(&GazeboRosElevator::OnElevator, this, _1),
+        boost::bind(&GazeboRosElevator::OnElevator, this, boost::placeholders::_1),
         ros::VoidPtr(), &this->queue_);
 
   this->elevatorSub_ = this->rosnode_->subscribe(so);

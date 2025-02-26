@@ -94,6 +94,14 @@ void GazeboRosP3D::Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf)
   else
     this->frame_name_ = _sdf->GetElement("frameName")->Get<std::string>();
 
+  if (!_sdf->HasElement("localTwist"))
+  {
+    ROS_DEBUG_NAMED("p3d", "p3d plugin missing <localTwist>, defaults to false");
+    this->local_twist_ = false;
+  }
+  else
+    this->local_twist_= _sdf->GetElement("localTwist")->Get<bool>();
+
   if (!_sdf->HasElement("xyzOffset"))
   {
     ROS_DEBUG_NAMED("p3d", "p3d plugin missing <xyzOffset>, defaults to 0s");
@@ -264,8 +272,19 @@ void GazeboRosP3D::UpdateChild()
         // get inertial Rates
         // Get Pose/Orientation
 #if GAZEBO_MAJOR_VERSION >= 8
-        ignition::math::Vector3d vpos = this->link_->WorldLinearVel();
-        ignition::math::Vector3d veul = this->link_->WorldAngularVel();
+        ignition::math::Vector3d vpos;
+        ignition::math::Vector3d veul;
+
+        if (this->local_twist_)
+        {
+          vpos = this->link_->RelativeLinearVel();
+          veul = this->link_->RelativeAngularVel();
+        }
+        else
+        {
+          vpos = this->link_->WorldLinearVel();
+          veul = this->link_->WorldAngularVel();
+        }
 
         pose = this->link_->WorldPose();
 #else
@@ -292,8 +311,11 @@ void GazeboRosP3D::UpdateChild()
           pose.Pos() = frame_pose.Rot().RotateVectorReverse(pose.Pos());
           pose.Rot() *= frame_pose.Rot().Inverse();
 
-          vpos = frame_pose.Rot().RotateVector(vpos - frame_vpos);
-          veul = frame_pose.Rot().RotateVector(veul - frame_veul);
+          if (!this->local_twist_)
+          {
+            vpos = frame_pose.Rot().RotateVector(vpos - frame_vpos);
+            veul = frame_pose.Rot().RotateVector(veul - frame_veul);
+          }
         }
 
         // Apply Constant Offsets
