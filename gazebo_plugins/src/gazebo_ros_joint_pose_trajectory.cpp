@@ -130,7 +130,7 @@ void GazeboRosJointPoseTrajectory::LoadThread()
     ros::SubscribeOptions trajectory_so =
       ros::SubscribeOptions::create<trajectory_msgs::JointTrajectory>(
       this->topic_name_, 100, boost::bind(
-      &GazeboRosJointPoseTrajectory::SetTrajectory, this, _1),
+      &GazeboRosJointPoseTrajectory::SetTrajectory, this, boost::placeholders::_1),
       ros::VoidPtr(), &this->queue_);
     this->sub_ = this->rosnode_->subscribe(trajectory_so);
   }
@@ -141,7 +141,7 @@ void GazeboRosJointPoseTrajectory::LoadThread()
     ros::AdvertiseServiceOptions srv_aso =
       ros::AdvertiseServiceOptions::create<gazebo_msgs::SetJointTrajectory>(
       this->service_name_,
-      boost::bind(&GazeboRosJointPoseTrajectory::SetTrajectory, this, _1, _2),
+      boost::bind(&GazeboRosJointPoseTrajectory::SetTrajectory, this, boost::placeholders::_1, boost::placeholders::_2),
       ros::VoidPtr(), &this->queue_);
     this->srv_ = this->rosnode_->advertiseService(srv_aso);
   }

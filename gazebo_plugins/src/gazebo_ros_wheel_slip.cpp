@@ -100,7 +100,7 @@ void GazeboRosWheelSlip::Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf)
     (*this->rosnode_);
   dynamic_reconfigure::Server<gazebo_plugins::WheelSlipConfig>
     ::CallbackType f =
-    boost::bind(&GazeboRosWheelSlip::configCallback, this, _1, _2);
+    boost::bind(&GazeboRosWheelSlip::configCallback, this, boost::placeholders::_1, boost::placeholders::_2);
   dyn_srv_->setCallback(f);
 
   // Custom Callback Queue

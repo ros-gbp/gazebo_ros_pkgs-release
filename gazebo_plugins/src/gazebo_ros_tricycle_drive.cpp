@@ -140,7 +140,7 @@ void GazeboRosTricycleDrive::Load ( physics::ModelPtr _parent, sdf::ElementPtr _
 
     ros::SubscribeOptions so =
         ros::SubscribeOptions::create<geometry_msgs::Twist> ( command_topic_, 1,
-                boost::bind ( &GazeboRosTricycleDrive::cmdVelCallback, this, _1 ),
+                boost::bind ( &GazeboRosTricycleDrive::cmdVelCallback, this, boost::placeholders::_1 ),
                 ros::VoidPtr(), &queue_ );
 
     cmd_vel_subscriber_ = gazebo_ros_->node()->subscribe ( so );
