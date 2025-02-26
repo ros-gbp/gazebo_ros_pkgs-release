@@ -308,7 +308,7 @@ void GazeboRosCameraUtils::LoadThread()
       (*this->rosnode_);
     dynamic_reconfigure::Server<gazebo_plugins::GazeboRosCameraConfig>
       ::CallbackType f =
-      boost::bind(&GazeboRosCameraUtils::configCallback, this, _1, _2);
+      boost::bind(&GazeboRosCameraUtils::configCallback, this, boost::placeholders::_1, boost::placeholders::_2);
     dyn_srv_->setCallback(f);
   }
   else
@@ -343,14 +343,14 @@ void GazeboRosCameraUtils::LoadThread()
   ros::SubscribeOptions zoom_so =
     ros::SubscribeOptions::create<std_msgs::Float64>(
         "set_hfov", 1,
-        boost::bind(&GazeboRosCameraUtils::SetHFOV, this, _1),
+        boost::bind(&GazeboRosCameraUtils::SetHFOV, this, boost::placeholders::_1),
         ros::VoidPtr(), &this->camera_queue_);
   this->cameraHFOVSubscriber_ = this->rosnode_->subscribe(zoom_so);
 
   ros::SubscribeOptions rate_so =
     ros::SubscribeOptions::create<std_msgs::Float64>(
         "set_update_rate", 1,
-        boost::bind(&GazeboRosCameraUtils::SetUpdateRate, this, _1),
+        boost::bind(&GazeboRosCameraUtils::SetUpdateRate, this, boost::placeholders::_1),
         ros::VoidPtr(), &this->camera_queue_);
   this->cameraUpdateRateSubscriber_ = this->rosnode_->subscribe(rate_so);
   */
@@ -360,7 +360,7 @@ void GazeboRosCameraUtils::LoadThread()
     ros::SubscribeOptions trigger_so =
       ros::SubscribeOptions::create<std_msgs::Empty>(
           this->trigger_topic_name_, 1,
-          boost::bind(&GazeboRosCameraUtils::TriggerCameraInternal, this, _1),
+          boost::bind(&GazeboRosCameraUtils::TriggerCameraInternal, this, boost::placeholders::_1),
           ros::VoidPtr(), &this->camera_queue_);
     this->trigger_subscriber_ = this->rosnode_->subscribe(trigger_so);
   }
