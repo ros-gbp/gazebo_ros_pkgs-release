@@ -207,7 +207,7 @@ namespace gazebo
     // Subscribe to the image topic
     ros::SubscribeOptions so =
       ros::SubscribeOptions::create<sensor_msgs::Image>(topic_name_, 1,
-          boost::bind(&GazeboRosVideo::processImage, this, _1),
+          boost::bind(&GazeboRosVideo::processImage, this, boost::placeholders::_1),
           ros::VoidPtr(), &queue_);
     camera_subscriber_ = rosnode_->subscribe(so);
 

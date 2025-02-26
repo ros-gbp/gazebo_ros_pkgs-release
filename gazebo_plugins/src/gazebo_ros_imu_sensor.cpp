@@ -84,7 +84,7 @@ void gazebo::GazeboRosImuSensor::Load(gazebo::sensors::SensorPtr sensor_, sdf::E
 
   imu_data_publisher = node->advertise<sensor_msgs::Imu>(topic_name,1);
 
-  connection = gazebo::event::Events::ConnectWorldUpdateBegin(boost::bind(&GazeboRosImuSensor::UpdateChild, this, _1));
+  connection = gazebo::event::Events::ConnectWorldUpdateBegin(boost::bind(&GazeboRosImuSensor::UpdateChild, this, boost::placeholders::_1));
 
   last_time = sensor->LastUpdateTime();
 }

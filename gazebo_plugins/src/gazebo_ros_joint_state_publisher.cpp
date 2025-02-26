@@ -109,7 +109,7 @@ void GazeboRosJointStatePublisher::Load ( physics::ModelPtr _parent, sdf::Elemen
     // Listen to the update event. This event is broadcast every
     // simulation iteration.
     this->updateConnection = event::Events::ConnectWorldUpdateBegin (
-                                 boost::bind ( &GazeboRosJointStatePublisher::OnUpdate, this, _1 ) );
+                                 boost::bind ( &GazeboRosJointStatePublisher::OnUpdate, this, boost::placeholders::_1 ) );
 }
 
 void GazeboRosJointStatePublisher::OnUpdate ( const common::UpdateInfo & _info )

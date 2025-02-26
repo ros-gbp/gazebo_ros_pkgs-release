@@ -2373,7 +2373,7 @@ void GazeboRosApiPlugin::physicsReconfigureThread()
 
   physics_reconfigure_srv_.reset(new dynamic_reconfigure::Server<gazebo_ros::PhysicsConfig>());
 
-  physics_reconfigure_callback_ = boost::bind(&GazeboRosApiPlugin::physicsReconfigureCallback, this, _1, _2);
+  physics_reconfigure_callback_ = boost::bind(&GazeboRosApiPlugin::physicsReconfigureCallback, this, boost::placeholders::_1, boost::placeholders::_2);
   physics_reconfigure_srv_->setCallback(physics_reconfigure_callback_);
 
   ROS_INFO_NAMED("api_plugin", "Physics dynamic reconfigure ready.");
