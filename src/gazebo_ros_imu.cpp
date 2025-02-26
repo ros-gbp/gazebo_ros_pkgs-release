@@ -173,7 +173,7 @@ void GazeboRosIMU::LoadThread()
     ros::AdvertiseServiceOptions aso =
       ros::AdvertiseServiceOptions::create<std_srvs::Empty>(
       this->service_name_, boost::bind(&GazeboRosIMU::ServiceCallback,
-      this, _1, _2), ros::VoidPtr(), &this->imu_queue_);
+      this, boost::placeholders::_1, boost::placeholders::_2), ros::VoidPtr(), &this->imu_queue_);
     this->srv_ = this->rosnode_->advertiseService(aso);
   }
 
