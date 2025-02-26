@@ -1,3 +1,32 @@
+## gazebo_ros_pkgs (noetic) - 2.9.3-1
+
+The packages in the `gazebo_ros_pkgs` repository were released into the `noetic` distro by running `/usr/bin/bloom-release gazebo_ros_pkgs --track noetic --ros-distro noetic` on `Wed, 26 Feb 2025 18:43:59 -0000`
+
+These packages were released:
+- `gazebo_dev`
+- `gazebo_msgs`
+- `gazebo_plugins`
+- `gazebo_ros`
+- `gazebo_ros_control`
+- `gazebo_ros_pkgs`
+
+Version of package(s) in repository `gazebo_ros_pkgs`:
+
+- upstream repository: https://github.com/ros-simulation/gazebo_ros_pkgs.git
+- release repository: https://github.com/ros-gbp/gazebo_ros_pkgs-release.git
+- rosdistro version: `2.9.2-1`
+- old version: `2.9.2-1`
+- new version: `2.9.3-1`
+
+Versions of tools used:
+
+- bloom version: `0.12.0`
+- catkin_pkg version: `1.0.0`
+- rosdep version: `0.25.1`
+- rosdistro version: `1.0.1`
+- vcstools version: `0.1.42`
+
+
 ## gazebo_ros_pkgs (noetic) - 2.9.2-1
 
 The packages in the `gazebo_ros_pkgs` repository were released into the `noetic` distro by running `/usr/bin/bloom-release gazebo_ros_pkgs --track noetic --ros-distro noetic` on `Wed, 21 Apr 2021 18:24:07 -0000`
