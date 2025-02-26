@@ -161,7 +161,7 @@ namespace gazebo
     // subscribe to the odometry topic
     ros::SubscribeOptions so =
       ros::SubscribeOptions::create<geometry_msgs::Twist>(command_topic_, 1,
-          boost::bind(&GazeboRosPlanarMove::cmdVelCallback, this, _1),
+          boost::bind(&GazeboRosPlanarMove::cmdVelCallback, this, boost::placeholders::_1),
           ros::VoidPtr(), &queue_);
 
     vel_sub_ = rosnode_->subscribe(so);

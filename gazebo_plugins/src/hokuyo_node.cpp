@@ -52,7 +52,7 @@ int main(int argc, char **argv)
 {
   ros::init(argc, argv, "hokuyo_node");
   dynamic_reconfigure::Server<gazebo_plugins::HokuyoConfig> srv;
-  dynamic_reconfigure::Server<gazebo_plugins::HokuyoConfig>::CallbackType f = boost::bind(&callback, _1, _2);
+  dynamic_reconfigure::Server<gazebo_plugins::HokuyoConfig>::CallbackType f = boost::bind(&callback, boost::placeholders::_1, boost::placeholders::_2);
   srv.setCallback(f);
   ROS_INFO_NAMED("hokuyo_node", "Starting to spin...");
   ros::spin();

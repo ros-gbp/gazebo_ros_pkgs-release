@@ -69,13 +69,13 @@ void GazeboRosHarness::Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf)
 
   ros::SubscribeOptions so = ros::SubscribeOptions::create<std_msgs::Float32>(
       "/" + _parent->GetName() + "/harness/velocity", 1,
-    boost::bind(&GazeboRosHarness::OnVelocity, this, _1),
+    boost::bind(&GazeboRosHarness::OnVelocity, this, boost::placeholders::_1),
     ros::VoidPtr(), &this->queue_);
   this->velocitySub_ = this->rosnode_->subscribe(so);
 
   so = ros::SubscribeOptions::create<std_msgs::Bool>(
     "/" + _parent->GetName() + "/harness/detach", 1,
-    boost::bind(&GazeboRosHarness::OnDetach, this, _1),
+    boost::bind(&GazeboRosHarness::OnDetach, this, boost::placeholders::_1),
     ros::VoidPtr(), &this->queue_);
   this->detachSub_ = this->rosnode_->subscribe(so);
 
